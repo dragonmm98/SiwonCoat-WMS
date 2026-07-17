@@ -1,0 +1,509 @@
+<title>Jably WMS — UI Design &amp; Mockups</title>
+
+<style>
+  /* Committed single-theme design doc — mirrors the product's own light identity
+     (forest / gold / green) so the mockups read as the real app. */
+  :root{
+    --forest:#172a24; --forest-2:#203b32; --forest-3:#2c493e;
+    --green:#23775e; --green-soft:#e7f3ee; --gold:#f0c75e; --gold-deep:#c9992f;
+    --canvas:#f4f6f3; --paper:#ffffff; --ink:#18201d; --ink-2:#34403b; --muted:#69736f; --line:#e2e7e3; --line-2:#edf0ee;
+    --blue:#477ba2; --blue-soft:#e8f1f7; --amber:#ae7722; --amber-soft:#fbf2dd; --violet:#7059a7; --violet-soft:#f0ebfa;
+    --red:#b24d42; --red-soft:#fae9e6;
+    --sans:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+    --mono:ui-monospace,"SF Mono","Menlo","Consolas",monospace;
+    --shadow:0 2px 8px #1f342509; --shadow-lg:0 16px 40px #0d211a1a;
+  }
+  *{box-sizing:border-box;} body{margin:0;}
+  .page{font-family:var(--sans); background:var(--canvas); color:var(--ink); line-height:1.55; -webkit-font-smoothing:antialiased; padding:clamp(18px,4vw,44px) clamp(14px,4vw,36px) 80px;}
+  .wrap{max-width:1000px; margin:0 auto;}
+
+  /* header */
+  header.hero{background:var(--forest); border-radius:16px; padding:clamp(26px,4vw,42px) clamp(24px,4vw,40px); color:#dce8e1; position:relative; overflow:hidden;}
+  header.hero::after{content:""; position:absolute; right:-60px; top:-60px; width:220px; height:220px; border-radius:50%; background:radial-gradient(circle,#ffffff10,transparent 70%);}
+  .hbrand{display:flex; align-items:center; gap:13px; margin-bottom:20px;}
+  .hbrand .mark{width:44px; height:44px; border-radius:12px; background:var(--gold); color:var(--forest); display:grid; place-items:center; font-size:26px; font-weight:900;}
+  .hbrand strong{font-size:20px; letter-spacing:-.3px; display:block; color:#fff;}
+  .hbrand small{display:block; font-size:10px; letter-spacing:2.5px; color:#91a69d; margin-top:1px;}
+  header.hero .eyebrow{font-family:var(--mono); font-size:11px; letter-spacing:.18em; text-transform:uppercase; color:var(--gold); font-weight:600;}
+  header.hero h1{font-size:clamp(27px,4.4vw,42px); line-height:1.04; letter-spacing:-.8px; margin:10px 0 8px; color:#fff; text-wrap:balance;}
+  header.hero p{font-size:clamp(14px,1.5vw,16px); color:#b8cdc3; max-width:64ch; margin:0;}
+
+  nav.toc{display:grid; grid-template-columns:repeat(4,1fr); gap:9px; margin:20px 0 6px;}
+  nav.toc a{background:var(--paper); border:1px solid var(--line); border-radius:11px; box-shadow:var(--shadow); padding:12px 14px; color:var(--ink); text-decoration:none;}
+  nav.toc a:hover{border-color:var(--green);}
+  nav.toc .n{font-family:var(--mono); font-size:11px; color:var(--green); font-weight:700;}
+  nav.toc .t{display:block; font-size:13px; font-weight:650; margin-top:3px;}
+  @media(max-width:640px){nav.toc{grid-template-columns:repeat(2,1fr);}}
+
+  section.sec{margin-top:34px; scroll-margin-top:14px;}
+  .sec-head{display:flex; align-items:baseline; gap:11px; margin:0 0 3px;}
+  .sec-head .num{font-family:var(--mono); font-size:13px; color:var(--green); font-weight:700;}
+  .sec-head h2{font-size:22px; margin:0; letter-spacing:-.4px; font-weight:750;}
+  .sec-sub{color:var(--muted); font-size:13.5px; margin:0 0 16px; max-width:74ch;}
+  .eyebrow{color:var(--green); font-size:11px; font-weight:800; letter-spacing:1.1px; text-transform:uppercase; margin:0 0 6px;}
+
+  .panel{background:var(--paper); border:1px solid var(--line); border-radius:13px; box-shadow:var(--shadow);}
+  .pad{padding:clamp(16px,2.6vw,24px);}
+
+  /* ---------- design system ---------- */
+  .ds-grid{display:grid; grid-template-columns:1fr 1fr; gap:14px;}
+  @media(max-width:720px){.ds-grid{grid-template-columns:1fr;}}
+  .block-h{font-family:var(--mono); font-size:10px; letter-spacing:.14em; text-transform:uppercase; color:var(--muted); margin:0 0 11px;}
+  .swatches{display:flex; flex-wrap:wrap; gap:9px;}
+  .sw{width:82px;}
+  .sw .chip{height:46px; border-radius:9px; border:1px solid #0000000f;}
+  .sw .nm{font-size:10.5px; margin-top:5px; font-weight:650;}
+  .sw .hx{font-family:var(--mono); font-size:9.5px; color:var(--muted);}
+  .btnrow{display:flex; gap:9px; flex-wrap:wrap; align-items:center;}
+  .btn{display:inline-flex; align-items:center; justify-content:center; min-height:38px; padding:0 15px; border-radius:9px; font-weight:700; font-size:12px; border:1px solid transparent; cursor:default;}
+  .btn.primary{background:var(--forest); color:#fff;} .btn.secondary{background:#fff; border-color:#dce2de; color:var(--ink-2);}
+  .btn.small{min-height:32px; font-size:11px; padding:0 11px;}
+  .pills{display:flex; gap:7px; flex-wrap:wrap;}
+  .st{display:inline-block; padding:4px 8px; border-radius:5px; font-size:10px; font-weight:750;}
+  .st.green{color:#2f705c; background:var(--green-soft);} .st.blue{color:#4b6686; background:#e9f0f7;}
+  .st.gold{color:#71601f; background:#f8f0d6;} .st.red{color:#a4453b; background:var(--red-soft);}
+  .typerow{display:flex; flex-direction:column; gap:6px;}
+  .typerow .t1{font-size:26px; letter-spacing:-.8px; font-weight:750;}
+  .typerow .t2{font-size:14px; font-weight:750;}
+  .typerow .t3{font-size:13px; color:var(--muted);}
+  .typerow .t4{font-family:var(--mono); font-size:11px; color:var(--green); letter-spacing:.1em; text-transform:uppercase; font-weight:700;}
+
+  /* ---------- mock frame ---------- */
+  .frame{border:1px solid var(--line); border-radius:14px; overflow:hidden; box-shadow:var(--shadow-lg); background:var(--canvas);}
+  .frame .bar{display:flex; align-items:center; gap:7px; padding:9px 13px; background:#eef1ee; border-bottom:1px solid var(--line);}
+  .frame .bar i{width:10px; height:10px; border-radius:50%; background:#cfd6d1; display:block;}
+  .frame .bar .url{margin-left:10px; font-family:var(--mono); font-size:10.5px; color:#8a938d; background:#fff; border:1px solid var(--line); border-radius:6px; padding:3px 10px;}
+  .mockscroll{overflow-x:auto;}
+  .app{display:grid; grid-template-columns:196px 1fr; width:940px; min-height:520px;}
+
+  /* sidebar mock */
+  .side{background:var(--forest); color:#dce8e1; padding:18px 13px;}
+  .side .brand{display:flex; gap:9px; align-items:center; padding:0 5px 18px;}
+  .side .brand .m{width:30px; height:30px; border-radius:8px; background:var(--gold); color:var(--forest); display:grid; place-items:center; font-weight:900; font-size:17px;}
+  .side .brand strong{font-size:15px; display:block; color:#fff; letter-spacing:-.3px;}
+  .side .brand small{font-size:8px; letter-spacing:2px; color:#91a69d; display:block;}
+  .side .wsw{display:flex; align-items:center; gap:8px; padding:9px; border:1px solid #324a41; background:var(--forest-2); border-radius:10px; margin-bottom:16px;}
+  .side .wsw .av{width:26px; height:26px; border-radius:7px; background:#315044; color:#d9eadf; display:grid; place-items:center; font-size:9px; font-weight:800;}
+  .side .wsw strong{font-size:11px; color:#eaf2ee; display:block;} .side .wsw small{font-size:9px; color:#91a69d; display:block; margin-top:1px;}
+  .side nav{display:flex; flex-direction:column; gap:3px;}
+  .side nav a{display:flex; align-items:center; gap:11px; padding:9px 11px; border-radius:8px; color:#9db1a8; font-size:12px; font-weight:600;}
+  .side nav a .ic{width:18px; text-align:center; font-size:14px;}
+  .side nav a.active{color:#fff; background:var(--forest-3); box-shadow:inset 3px 0 var(--gold);}
+  .side .usr{display:flex; align-items:center; gap:9px; border-top:1px solid #31473f; margin-top:22px; padding-top:15px;}
+  .side .usr .av{width:30px; height:30px; border-radius:50%; background:#d9e7df; color:#244035; display:grid; place-items:center; font-size:10px; font-weight:800;}
+  .side .usr strong{font-size:11px; color:#eaf2ee; display:block;} .side .usr small{font-size:9px; color:#8fa299; display:block;}
+
+  /* content mock */
+  .content{padding:24px 26px;}
+  .ph{display:flex; align-items:flex-end; justify-content:space-between; gap:16px; margin-bottom:18px;}
+  .ph h1{margin:0; font-size:24px; letter-spacing:-.6px;} .ph .sub{margin:5px 0 0; color:var(--muted); font-size:12px;}
+  .ph .acts{display:flex; gap:8px;}
+  .mgrid{display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:16px;}
+  .mc{position:relative; padding:15px 15px 14px 56px; background:#fff; border:1px solid var(--line); border-radius:12px;}
+  .mc p{margin:0 0 4px; color:var(--muted); font-size:10px; font-weight:650;} .mc strong{font-size:21px; letter-spacing:-.5px; display:block;}
+  .mc .mi{position:absolute; left:14px; top:16px; width:30px; height:30px; border-radius:8px; display:grid; place-items:center; font-size:14px;}
+  .mi.blue{background:var(--blue-soft); color:var(--blue);} .mi.amber{background:var(--amber-soft); color:var(--amber);}
+  .mi.violet{background:var(--violet-soft); color:var(--violet);} .mi.green{background:var(--green-soft); color:var(--green);}
+  .cols{display:grid; grid-template-columns:1.5fr 1fr; gap:14px;}
+  @media(max-width:720px){.cols{grid-template-columns:1fr;}}
+  .pnl{background:#fff; border:1px solid var(--line); border-radius:12px; overflow:hidden;}
+  .pnl .ph2{display:flex; justify-content:space-between; align-items:flex-start; padding:14px 16px; border-bottom:1px solid var(--line-2);}
+  .pnl .ph2 h3{margin:0; font-size:13px;} .pnl .ph2 p{margin:3px 0 0; font-size:9.5px; color:var(--muted);}
+  .flow{height:170px; display:flex; align-items:flex-end; gap:5%; padding:22px 22px 16px;}
+  .fcol{flex:1; height:100%; display:flex; flex-direction:column; justify-content:flex-end; align-items:center; gap:6px; color:#77817d; font-size:8.5px;}
+  .fbar{width:100%; max-width:38px; min-height:16px; border-radius:5px 5px 2px 2px; background:linear-gradient(180deg,#3d8a70,#245f4c);}
+  .fcol.gold .fbar{background:linear-gradient(180deg,#e6bd55,var(--gold-deep));}
+  .fval{font-size:8.5px; color:#415049; font-weight:750;}
+  .alerts{padding:5px 16px;}
+  .al{display:flex; align-items:center; gap:10px; padding:9px 0; border-bottom:1px solid var(--line-2); font-size:11px;}
+  .al:last-child{border-bottom:none;}
+  .al .ai{width:26px; height:26px; border-radius:7px; display:grid; place-items:center; font-size:11px; font-weight:800; flex:none;}
+  .ai.danger{background:var(--red-soft); color:var(--red);} .ai.warn{background:var(--amber-soft); color:var(--amber);} .ai.neu{background:#edf0ef; color:#5f6a65;}
+  .al div{flex:1;} .al strong{display:block; font-size:11px;} .al small{color:var(--muted); font-size:9.5px;}
+
+  table.dt{width:100%; border-collapse:collapse; font-size:11px;}
+  table.dt th{text-align:left; padding:9px 14px; border-bottom:1px solid var(--line); color:var(--muted); font-size:9px; letter-spacing:.06em; text-transform:uppercase; font-weight:700;}
+  table.dt td{padding:9px 14px; border-bottom:1px solid var(--line-2); vertical-align:middle;}
+  table.dt tr:last-child td{border-bottom:none;}
+  table.dt .code{font-family:var(--mono); font-weight:600; color:var(--ink);}
+  .num{font-variant-numeric:tabular-nums; text-align:right;}
+  .searchbar{display:flex; gap:9px; margin-bottom:12px;}
+  .searchbar .inp{flex:1; border:1px solid var(--line); border-radius:9px; padding:9px 13px; font-size:11px; color:var(--muted); background:#fff;}
+
+  /* wireframe styling */
+  .wf .frame{box-shadow:var(--shadow);}
+  .wftag{display:inline-block; font-family:var(--mono); font-size:9.5px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--amber); background:var(--amber-soft); border:1px solid #e7d3a3; border-radius:20px; padding:3px 10px; margin-left:9px; vertical-align:middle;}
+  .scanline{display:flex; gap:9px; align-items:center; background:var(--forest); color:#dce8e1; border-radius:10px; padding:11px 14px; margin-bottom:14px;}
+  .scanline .ic{width:30px; height:30px; border-radius:8px; background:var(--gold); color:var(--forest); display:grid; place-items:center; font-size:15px; font-weight:800;}
+  .scanline input{flex:1; background:var(--forest-2); border:1px solid #35544a; border-radius:8px; padding:9px 12px; color:#eaf2ee; font-family:var(--mono); font-size:12px;}
+  .recv td .cell{display:flex; gap:6px;}
+  .miniqty{width:52px; border:1px solid var(--line); border-radius:6px; padding:5px 7px; font-size:10px; font-family:var(--mono); text-align:center; background:#fff;}
+  .miniqty.ok{border-color:#bcd9cb; background:#f2f9f5;} .miniqty.bad{border-color:#e6c3bd; background:#fdf3f1;}
+  .alloc-row{display:flex; align-items:center; gap:10px; padding:10px 0; border-bottom:1px solid var(--line-2); font-size:11px;}
+  .alloc-row:last-child{border-bottom:none;}
+  .lotchip{font-family:var(--mono); font-size:10px; background:var(--green-soft); color:#2f705c; border:1px solid #bcdccb; border-radius:6px; padding:3px 8px; font-weight:700;}
+  .fefo{font-family:var(--mono); font-size:8.5px; color:var(--amber); font-weight:800; letter-spacing:.05em;}
+
+  /* phone frame */
+  .phones{display:flex; gap:18px; flex-wrap:wrap; justify-content:center;}
+  .phone{width:250px; border:9px solid #12201b; border-radius:30px; overflow:hidden; box-shadow:var(--shadow-lg); background:#fff; flex:none;}
+  .phone .st-bar{background:var(--forest); color:#cfe0d7; font-size:8.5px; padding:5px 14px; display:flex; justify-content:space-between; font-family:var(--mono);}
+  .phone .sc{padding:14px;}
+  .sc .step-dot{display:flex; gap:5px; margin-bottom:14px;}
+  .sc .step-dot i{height:4px; border-radius:2px; flex:1; background:var(--line);}
+  .sc .step-dot i.on{background:var(--green);}
+  .sc .stepnum{font-family:var(--mono); font-size:9px; color:var(--muted); letter-spacing:.1em; text-transform:uppercase; font-weight:700;}
+  .sc h4{margin:5px 0 12px; font-size:18px; letter-spacing:-.4px;}
+  .sc .bigscan{border:2px dashed #bcd0c7; border-radius:14px; padding:26px 12px; text-align:center; color:var(--green); background:var(--green-soft); margin-bottom:12px;}
+  .sc .bigscan .icn{font-size:30px;}
+  .sc .bigscan .lbl{font-size:11px; font-weight:700; margin-top:6px;}
+  .sc .readout{display:flex; justify-content:space-between; align-items:center; padding:11px 13px; border:1px solid var(--line); border-radius:10px; margin-bottom:9px; font-size:12px;}
+  .sc .readout .k{color:var(--muted); font-size:9px; text-transform:uppercase; letter-spacing:.06em; font-weight:700;}
+  .sc .readout .v{font-family:var(--mono); font-weight:700;}
+  .sc .readout.done{background:var(--green-soft); border-color:#bcdccb;}
+  .sc .bigbtn{background:var(--forest); color:#fff; border-radius:11px; text-align:center; padding:15px; font-weight:700; font-size:14px; margin-top:6px;}
+  .sc .qtybtns{display:flex; gap:8px; align-items:center; justify-content:center; margin:16px 0;}
+  .sc .qtybtns .q{width:44px; height:44px; border-radius:11px; border:1px solid var(--line); display:grid; place-items:center; font-size:20px; background:#fff; color:var(--ink-2);}
+  .sc .qtybtns .qn{font-size:30px; font-weight:750; min-width:56px; text-align:center; font-variant-numeric:tabular-nums;}
+  .sc .toast{display:flex; align-items:center; gap:9px; background:#123; border-radius:11px; padding:12px; margin-top:10px;}
+  .phone-cap{text-align:center; font-size:11px; color:var(--muted); margin-top:9px; font-weight:650;}
+
+  .note{margin-top:14px; font-size:13px; color:var(--ink-2); border-left:3px solid var(--gold); padding:5px 0 5px 13px;} .note b{color:var(--ink);}
+  ul.leg{list-style:none; margin:12px 0 0; padding:0; display:flex; gap:16px; flex-wrap:wrap; font-size:11px; color:var(--muted);}
+  ul.leg li{display:flex; align-items:center; gap:6px;} ul.leg i{width:11px; height:11px; border-radius:3px;}
+  footer.foot{margin-top:38px; padding-top:18px; border-top:1px solid var(--line); display:flex; justify-content:space-between; gap:14px; flex-wrap:wrap; font-family:var(--mono); font-size:11px; color:var(--muted);}
+  footer.foot a{color:var(--green); text-decoration:none;}
+</style>
+
+<div class="page"><div class="wrap">
+
+  <header class="hero">
+    <div class="hbrand"><div class="mark">J</div><div><strong>Jably</strong><small>WMS</small></div></div>
+    <span class="eyebrow">Product Design · UI Reference &amp; Mockups</span>
+    <h1>Designing the warehouse console</h1>
+    <p>The visual language of the app, faithful mockups of the core screens, and wireframes for the
+      three screens students build during the course. Rendered in the product's own identity — a forest
+      &amp; gold operations console. (This doc deliberately commits to the app's light look.)</p>
+  </header>
+
+  <nav class="toc">
+    <a href="#ds"><span class="n">01</span><span class="t">Design system</span></a>
+    <a href="#shell"><span class="n">02</span><span class="t">App shell</span></a>
+    <a href="#screens"><span class="n">03</span><span class="t">Screen mockups</span></a>
+    <a href="#wire"><span class="n">04</span><span class="t">New-screen wireframes</span></a>
+  </nav>
+
+  <!-- ============ 1. DESIGN SYSTEM ============ -->
+  <section class="sec" id="ds">
+    <div class="sec-head"><span class="num">01</span><h2>Design system</h2></div>
+    <p class="sec-sub">The tokens and components every screen is built from — taken from the app's own stylesheet. Reuse these when building new screens so the console stays consistent.</p>
+    <div class="panel pad">
+      <p class="block-h">Palette</p>
+      <div class="swatches">
+        <div class="sw"><div class="chip" style="background:#172a24"></div><div class="nm">Forest</div><div class="hx">#172a24</div></div>
+        <div class="sw"><div class="chip" style="background:#23775e"></div><div class="nm">Green</div><div class="hx">#23775e</div></div>
+        <div class="sw"><div class="chip" style="background:#f0c75e"></div><div class="nm">Gold</div><div class="hx">#f0c75e</div></div>
+        <div class="sw"><div class="chip" style="background:#f4f6f3"></div><div class="nm">Canvas</div><div class="hx">#f4f6f3</div></div>
+        <div class="sw"><div class="chip" style="background:#ffffff"></div><div class="nm">Paper</div><div class="hx">#ffffff</div></div>
+        <div class="sw"><div class="chip" style="background:#18201d"></div><div class="nm">Ink</div><div class="hx">#18201d</div></div>
+        <div class="sw"><div class="chip" style="background:#69736f"></div><div class="nm">Muted</div><div class="hx">#69736f</div></div>
+        <div class="sw"><div class="chip" style="background:#e2e7e3"></div><div class="nm">Line</div><div class="hx">#e2e7e3</div></div>
+      </div>
+      <ul class="leg">
+        <li><i style="background:#172a24"></i>Forest — sidebar, primary actions</li>
+        <li><i style="background:#f0c75e"></i>Gold — brand, active state</li>
+        <li><i style="background:#23775e"></i>Green — accent, positive</li>
+      </ul>
+    </div>
+
+    <div class="ds-grid" style="margin-top:14px;">
+      <div class="panel pad">
+        <p class="block-h">Typography — Inter</p>
+        <div class="typerow">
+          <span class="t4">Eyebrow · uppercase</span>
+          <span class="t1">Page heading 30</span>
+          <span class="t2">Panel / card title 14</span>
+          <span class="t3">Body &amp; subtitle 13, muted</span>
+        </div>
+      </div>
+      <div class="panel pad">
+        <p class="block-h">Buttons</p>
+        <div class="btnrow" style="margin-bottom:14px;">
+          <span class="btn primary">Primary</span>
+          <span class="btn secondary">Secondary</span>
+          <span class="btn secondary small">Small</span>
+        </div>
+        <p class="block-h">Status pills</p>
+        <div class="pills">
+          <span class="st green">AVAILABLE</span><span class="st green">RECEIVED</span>
+          <span class="st blue">ALLOCATED</span><span class="st blue">PICKING</span>
+          <span class="st gold">OPEN</span><span class="st red">EXCEPTION</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel pad" style="margin-top:14px;">
+      <p class="block-h">Metric card &amp; semantic icons</p>
+      <div class="mgrid" style="margin-bottom:0;">
+        <div class="mc"><div class="mi blue">▦</div><p>Inbound backlog</p><strong>12</strong></div>
+        <div class="mc"><div class="mi amber">□</div><p>On hand (units)</p><strong>18.4k</strong></div>
+        <div class="mc"><div class="mi violet">◇</div><p>Active picks</p><strong>7</strong></div>
+        <div class="mc"><div class="mi green">✓</div><p>Ready to ship</p><strong>23</strong></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 2. APP SHELL ============ -->
+  <section class="sec" id="shell">
+    <div class="sec-head"><span class="num">02</span><h2>App shell</h2></div>
+    <p class="sec-sub">A fixed 244px forest sidebar — brand, warehouse switcher, primary navigation with a gold active marker, and the signed-in user — with a light content canvas to its right. Every screen lives in this frame.</p>
+    <div class="frame">
+      <div class="bar"><i></i><i></i><i></i><span class="url">localhost:3000</span></div>
+      <div class="mockscroll"><div class="app">
+        <aside class="side">
+          <div class="brand"><div class="m">J</div><div><strong>Jably</strong><small>WMS</small></div></div>
+          <div class="wsw"><div class="av">SEL</div><div><strong>SEL-01</strong><small>Asia/Seoul ▾</small></div></div>
+          <nav>
+            <a class="active"><span class="ic">▦</span>Overview</a>
+            <a><span class="ic">⇩</span>Inbound</a>
+            <a><span class="ic">□</span>Inventory</a>
+            <a><span class="ic">⇧</span>Outbound</a>
+            <a><span class="ic">◇</span>Deliveries</a>
+            <a><span class="ic">✓</span>Tasks</a>
+            <a><span class="ic">⌁</span>Catalog</a>
+          </nav>
+          <div class="usr"><div class="av">JV</div><div><strong>Javohir</strong><small>Administrator</small></div></div>
+        </aside>
+        <main class="content">
+          <div class="ph"><div><p class="eyebrow" style="margin-bottom:5px;">Anatomy</p><h1>Content area</h1><p class="sub">Page header · metrics · panels stack here</p></div><div class="acts"><span class="btn secondary small">Export</span><span class="btn primary small">+ New</span></div></div>
+          <div style="border:2px dashed var(--line); border-radius:12px; padding:40px; text-align:center; color:var(--muted); font-size:12px;">Each screen fills this region with a page header, metric row, and panels — see the mockups below.</div>
+        </main>
+      </div></div>
+    </div>
+    <div class="note"><b>Scanner note:</b> the same shell collapses on small screens; scanner routes (<span style="font-family:var(--mono)">/scan/*</span>) drop the sidebar for a full-screen, one-handed layout — shown in section 04.</div>
+  </section>
+
+  <!-- ============ 3. SCREEN MOCKUPS ============ -->
+  <section class="sec" id="screens">
+    <div class="sec-head"><span class="num">03</span><h2>Screen mockups — the app today</h2></div>
+    <p class="sec-sub">Faithful mockups of the core console screens students study in the first days.</p>
+
+    <p class="eyebrow" style="margin:18px 0 8px;">Overview dashboard</p>
+    <div class="frame">
+      <div class="bar"><i></i><i></i><i></i><span class="url">localhost:3000/</span></div>
+      <div class="mockscroll"><div class="app">
+        <aside class="side">
+          <div class="brand"><div class="m">J</div><div><strong>Jably</strong><small>WMS</small></div></div>
+          <div class="wsw"><div class="av">SEL</div><div><strong>SEL-01</strong><small>Asia/Seoul ▾</small></div></div>
+          <nav>
+            <a class="active"><span class="ic">▦</span>Overview</a>
+            <a><span class="ic">⇩</span>Inbound</a><a><span class="ic">□</span>Inventory</a>
+            <a><span class="ic">⇧</span>Outbound</a><a><span class="ic">◇</span>Deliveries</a>
+            <a><span class="ic">✓</span>Tasks</a><a><span class="ic">⌁</span>Catalog</a>
+          </nav>
+          <div class="usr"><div class="av">JV</div><div><strong>Javohir</strong><small>Administrator</small></div></div>
+        </aside>
+        <main class="content">
+          <div class="ph"><div><p class="eyebrow" style="margin-bottom:5px;">Operations</p><h1>Seoul Demo Fulfillment Center</h1><p class="sub">Live operational health across receiving, inventory, fulfillment, and delivery.</p></div><div class="acts"><span class="btn secondary small">Export</span><span class="btn primary small">+ New order</span></div></div>
+          <div class="mgrid">
+            <div class="mc"><div class="mi blue">▦</div><p>Inbound backlog</p><strong>12</strong></div>
+            <div class="mc"><div class="mi amber">□</div><p>On hand (units)</p><strong>18,420</strong></div>
+            <div class="mc"><div class="mi violet">◇</div><p>Active picks</p><strong>7</strong></div>
+            <div class="mc"><div class="mi green">✓</div><p>Ready to ship</p><strong>23</strong></div>
+          </div>
+          <div class="cols">
+            <div class="pnl">
+              <div class="ph2"><div><h3>Fulfillment flow</h3><p>Live quantities by operational stage</p></div><span style="font-size:10px; color:var(--green); font-weight:700;">Open outbound →</span></div>
+              <div class="flow">
+                <div class="fcol"><span class="fval">142</span><div class="fbar" style="height:40%"></div><span>Received</span></div>
+                <div class="fcol"><span class="fval">96</span><div class="fbar" style="height:55%"></div><span>Putaway</span></div>
+                <div class="fcol"><span class="fval">88</span><div class="fbar" style="height:70%"></div><span>Allocated</span></div>
+                <div class="fcol"><span class="fval">54</span><div class="fbar" style="height:48%"></div><span>Picking</span></div>
+                <div class="fcol gold"><span class="fval">31</span><div class="fbar" style="height:78%"></div><span>Packed</span></div>
+                <div class="fcol gold"><span class="fval">23</span><div class="fbar" style="height:60%"></div><span>Shipped</span></div>
+              </div>
+            </div>
+            <div class="pnl">
+              <div class="ph2"><div><h3>Exceptions</h3><p>Needs a supervisor</p></div><span style="width:22px;height:22px;border-radius:50%;background:#f7e7e5;color:#a54a40;display:grid;place-items:center;font-size:10px;font-weight:800;">3</span></div>
+              <div class="alerts">
+                <div class="al"><span class="ai danger">!</span><div><strong>Short pick · SO-1043</strong><small>2 of 5 units · A-02-01</small></div></div>
+                <div class="al"><span class="ai warn">⌁</span><div><strong>Unexpected barcode</strong><small>Receiving · dock 2</small></div></div>
+                <div class="al"><span class="ai neu">□</span><div><strong>Lot expiring &lt; 30d</strong><small>DEMO-001 · LOT-260701</small></div></div>
+              </div>
+            </div>
+          </div>
+        </main>
+      </div></div>
+    </div>
+
+    <p class="eyebrow" style="margin:22px 0 8px;">Inventory — stock table</p>
+    <div class="frame">
+      <div class="bar"><i></i><i></i><i></i><span class="url">localhost:3000/inventory</span></div>
+      <div class="mockscroll"><div class="app">
+        <aside class="side">
+          <div class="brand"><div class="m">J</div><div><strong>Jably</strong><small>WMS</small></div></div>
+          <div class="wsw"><div class="av">SEL</div><div><strong>SEL-01</strong><small>Asia/Seoul ▾</small></div></div>
+          <nav>
+            <a><span class="ic">▦</span>Overview</a><a><span class="ic">⇩</span>Inbound</a>
+            <a class="active"><span class="ic">□</span>Inventory</a>
+            <a><span class="ic">⇧</span>Outbound</a><a><span class="ic">◇</span>Deliveries</a>
+            <a><span class="ic">✓</span>Tasks</a><a><span class="ic">⌁</span>Catalog</a>
+          </nav>
+          <div class="usr"><div class="av">JV</div><div><strong>Javohir</strong><small>Administrator</small></div></div>
+        </aside>
+        <main class="content">
+          <div class="ph"><div><p class="eyebrow" style="margin-bottom:5px;">Inventory</p><h1>Stock balances</h1><p class="sub">Search by SKU, barcode, lot, or location.</p></div><div class="acts"><span class="btn secondary small">Ledger</span><span class="btn primary small">+ Adjustment</span></div></div>
+          <div class="searchbar"><div class="inp">🔍  Search SKU / barcode / location…</div><span class="btn secondary small">Filters</span></div>
+          <div class="pnl"><div class="table-wrap"><table class="dt">
+            <thead><tr><th>SKU</th><th>Location</th><th>Lot</th><th class="num">On hand</th><th class="num">Reserved</th><th class="num">Available</th><th>Status</th></tr></thead>
+            <tbody>
+              <tr><td class="code">DEMO-001</td><td class="code">A-01-01</td><td class="code">LOT-260701</td><td class="num">420</td><td class="num">62</td><td class="num">358</td><td><span class="st green">AVAILABLE</span></td></tr>
+              <tr><td class="code">DEMO-001</td><td class="code">A-01-02</td><td class="code">LOT-260812</td><td class="num">180</td><td class="num">0</td><td class="num">180</td><td><span class="st green">AVAILABLE</span></td></tr>
+              <tr><td class="code">SKU-2200</td><td class="code">A-02-01</td><td class="code">—</td><td class="num">64</td><td class="num">64</td><td class="num">0</td><td><span class="st blue">ALLOCATED</span></td></tr>
+              <tr><td class="code">SKU-3010</td><td class="code">RCV-01</td><td class="code">—</td><td class="num">96</td><td class="num">0</td><td class="num">96</td><td><span class="st gold">STAGING</span></td></tr>
+              <tr><td class="code">SKU-4188</td><td class="code">A-02-01</td><td class="code">LOT-259940</td><td class="num">12</td><td class="num">0</td><td class="num">12</td><td><span class="st red">EXPIRED</span></td></tr>
+            </tbody>
+          </table></div></div>
+        </main>
+      </div></div>
+    </div>
+  </section>
+
+  <!-- ============ 4. WIREFRAMES ============ -->
+  <section class="sec wf" id="wire">
+    <div class="sec-head"><span class="num">04</span><h2>New-screen wireframes</h2></div>
+    <p class="sec-sub">The three screens students build during Days 7–9. These don't exist in the repo yet — build to these. Shown in the real design language so they drop straight into the app.</p>
+
+    <p class="eyebrow" style="margin:18px 0 8px;">Receiving station <span class="wftag">Day 7 · to build</span></p>
+    <div class="frame">
+      <div class="bar"><i></i><i></i><i></i><span class="url">localhost:3000/inbound/purchase-orders/PO-5501/receive</span></div>
+      <div class="mockscroll"><div class="app">
+        <aside class="side">
+          <div class="brand"><div class="m">J</div><div><strong>Jably</strong><small>WMS</small></div></div>
+          <div class="wsw"><div class="av">SEL</div><div><strong>SEL-01</strong><small>Asia/Seoul ▾</small></div></div>
+          <nav>
+            <a><span class="ic">▦</span>Overview</a><a class="active"><span class="ic">⇩</span>Inbound</a>
+            <a><span class="ic">□</span>Inventory</a><a><span class="ic">⇧</span>Outbound</a>
+            <a><span class="ic">◇</span>Deliveries</a><a><span class="ic">✓</span>Tasks</a><a><span class="ic">⌁</span>Catalog</a>
+          </nav>
+          <div class="usr"><div class="av">JV</div><div><strong>Javohir</strong><small>Administrator</small></div></div>
+        </aside>
+        <main class="content">
+          <div class="ph"><div><p class="eyebrow" style="margin-bottom:5px;">Inbound · PO-5501</p><h1>Receiving station</h1><p class="sub">Acme Supply Co · expected 14:00 · dock 2 &nbsp;·&nbsp; <span class="st gold">OPEN</span></p></div><div class="acts"><span class="btn secondary small">Report discrepancy</span><span class="btn primary small">Post receipt</span></div></div>
+          <div class="scanline"><div class="ic">⌂</div><input value="Scan PO or SKU barcode…" readonly></div>
+          <div class="pnl"><div class="table-wrap"><table class="dt recv">
+            <thead><tr><th>SKU</th><th>Expected</th><th>Accepted</th><th>Damaged</th><th>Lot</th><th>Expiry</th></tr></thead>
+            <tbody>
+              <tr><td class="code">DEMO-001</td><td class="num">120</td><td><div class="cell"><span class="miniqty ok">120</span></div></td><td><div class="cell"><span class="miniqty">0</span></div></td><td><span class="miniqty" style="width:78px">LOT-260701</span></td><td><span class="miniqty" style="width:74px">2026-12</span></td></tr>
+              <tr><td class="code">SKU-2200</td><td class="num">80</td><td><div class="cell"><span class="miniqty ok">76</span></div></td><td><div class="cell"><span class="miniqty bad">4</span></div></td><td><span class="miniqty" style="width:78px">—</span></td><td><span class="miniqty" style="width:74px">—</span></td></tr>
+              <tr><td class="code">SKU-3010</td><td class="num">60</td><td><div class="cell"><span class="miniqty">0</span></div></td><td><div class="cell"><span class="miniqty">0</span></div></td><td><span class="miniqty" style="width:78px">—</span></td><td><span class="miniqty" style="width:74px">—</span></td></tr>
+            </tbody>
+          </table></div></div>
+          <div class="note" style="margin-top:14px;"><b>Behavior:</b> posting writes stock into the <span style="font-family:var(--mono)">RCV-01</span> staging location with a <b>RECEIPT</b> ledger row per line, and advances the PO to <span class="st blue" style="font-size:9px">PARTIALLY_RECEIVED</span> / <span class="st green" style="font-size:9px">RECEIVED</span>.</div>
+        </main>
+      </div></div>
+    </div>
+
+    <p class="eyebrow" style="margin:22px 0 8px;">Allocation preview <span class="wftag">Day 8 · to build</span></p>
+    <div class="frame">
+      <div class="bar"><i></i><i></i><i></i><span class="url">localhost:3000/outbound/orders/SO-1043/allocate</span></div>
+      <div class="mockscroll"><div class="app">
+        <aside class="side">
+          <div class="brand"><div class="m">J</div><div><strong>Jably</strong><small>WMS</small></div></div>
+          <div class="wsw"><div class="av">SEL</div><div><strong>SEL-01</strong><small>Asia/Seoul ▾</small></div></div>
+          <nav>
+            <a><span class="ic">▦</span>Overview</a><a><span class="ic">⇩</span>Inbound</a>
+            <a><span class="ic">□</span>Inventory</a><a class="active"><span class="ic">⇧</span>Outbound</a>
+            <a><span class="ic">◇</span>Deliveries</a><a><span class="ic">✓</span>Tasks</a><a><span class="ic">⌁</span>Catalog</a>
+          </nav>
+          <div class="usr"><div class="av">JV</div><div><strong>Javohir</strong><small>Administrator</small></div></div>
+        </aside>
+        <main class="content">
+          <div class="ph"><div><p class="eyebrow" style="margin-bottom:5px;">Outbound · SO-1043</p><h1>Allocate stock</h1><p class="sub">Kim Minjun · Seoul · Standard &nbsp;·&nbsp; <span class="st gold">READY_TO_ALLOCATE</span></p></div><div class="acts"><span class="btn secondary small">Back</span><span class="btn primary small">Reserve all</span></div></div>
+          <div class="cols">
+            <div class="pnl">
+              <div class="ph2"><div><h3>Allocation plan</h3><p>FEFO for expiry-tracked SKUs, else FIFO</p></div></div>
+              <div style="padding:6px 16px 12px;">
+                <div class="alloc-row"><span class="lotchip">LOT-260701</span><div style="flex:1"><strong style="font-size:12px;">DEMO-001</strong><small style="color:var(--muted); font-size:10px; display:block;">A-01-01 · exp 2026-12 <span class="fefo">← FEFO</span></small></div><span class="num" style="font-weight:700;">40</span></div>
+                <div class="alloc-row"><span class="lotchip">LOT-260812</span><div style="flex:1"><strong style="font-size:12px;">DEMO-001</strong><small style="color:var(--muted); font-size:10px; display:block;">A-01-02 · exp 2027-01</small></div><span class="num" style="font-weight:700;">10</span></div>
+                <div class="alloc-row"><span class="lotchip" style="background:#e9f0f7; color:#4b6686; border-color:#c4d5e8;">FIFO</span><div style="flex:1"><strong style="font-size:12px;">SKU-2200</strong><small style="color:var(--muted); font-size:10px; display:block;">A-02-01 · oldest first</small></div><span class="num" style="font-weight:700;">15</span></div>
+              </div>
+            </div>
+            <div class="pnl">
+              <div class="ph2"><div><h3>Order lines</h3><p>ordered vs allocatable</p></div></div>
+              <div style="padding:6px 16px 12px;">
+                <div class="alloc-row"><div style="flex:1"><strong style="font-size:12px;">DEMO-001</strong></div><span style="color:var(--muted); font-size:10px;">50 / 50</span><span class="st green">FULL</span></div>
+                <div class="alloc-row"><div style="flex:1"><strong style="font-size:12px;">SKU-2200</strong></div><span style="color:var(--muted); font-size:10px;">15 / 20</span><span class="st gold">SHORT</span></div>
+              </div>
+              <div class="note" style="margin:0 16px 14px; border-color:var(--red);"><b>Guard:</b> if any line can't be met and partial allocation is off, the whole reserve is rejected.</div>
+            </div>
+          </div>
+        </main>
+      </div></div>
+    </div>
+
+    <p class="eyebrow" style="margin:22px 0 10px;">Scanner — putaway flow <span class="wftag">Day 9 · to build</span></p>
+    <div class="panel pad">
+      <p class="sec-sub" style="margin:0 0 16px;">Full-screen, one-handed, minimal typing. A four-step machine with big scan targets and unmistakable success / error feedback. Stock-changing steps require connectivity.</p>
+      <div class="phones">
+
+        <div>
+        <div class="phone">
+          <div class="st-bar"><span>9:41</span><span>SEL-01 · ▮▮▮</span></div>
+          <div class="sc">
+            <div class="step-dot"><i class="on"></i><i></i><i></i><i></i></div>
+            <span class="stepnum">Step 1 of 4</span>
+            <h4>Scan source location</h4>
+            <div class="bigscan"><div class="icn">⤢</div><div class="lbl">Point at the bin barcode</div></div>
+            <div class="readout"><span class="k">Task</span><span class="v">Putaway · 96 u</span></div>
+          </div>
+        </div>
+        <p class="phone-cap">1 · Source</p>
+        </div>
+
+        <div>
+        <div class="phone">
+          <div class="st-bar"><span>9:41</span><span>SEL-01 · ▮▮▮</span></div>
+          <div class="sc">
+            <div class="step-dot"><i class="on"></i><i class="on"></i><i></i><i></i></div>
+            <span class="stepnum">Step 2 of 4</span>
+            <h4>Scan item</h4>
+            <div class="readout done"><span class="k">Source</span><span class="v">RCV-01 ✓</span></div>
+            <div class="bigscan"><div class="icn">▥</div><div class="lbl">Scan the product barcode</div></div>
+            <div class="readout"><span class="k">Expected</span><span class="v">DEMO-001</span></div>
+          </div>
+        </div>
+        <p class="phone-cap">2 · Item</p>
+        </div>
+
+        <div>
+        <div class="phone">
+          <div class="st-bar"><span>9:41</span><span>SEL-01 · ▮▮▮</span></div>
+          <div class="sc">
+            <div class="step-dot"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></div>
+            <span class="stepnum">Step 4 of 4</span>
+            <h4>Confirm quantity</h4>
+            <div class="readout done"><span class="k">Dest</span><span class="v">A-01-01 ✓</span></div>
+            <div class="qtybtns"><span class="q">–</span><span class="qn">96</span><span class="q">+</span></div>
+            <div class="bigbtn">Confirm putaway</div>
+            <div class="toast"><span style="width:26px;height:26px;border-radius:7px;background:var(--green);color:#fff;display:grid;place-items:center;font-weight:800;">✓</span><div style="color:#cfe0d7; font-size:11px;"><strong style="color:#fff; font-size:12px; display:block;">Moved · beep</strong>96 u → A-01-01</div></div>
+          </div>
+        </div>
+        <p class="phone-cap">3 · Destination → confirm</p>
+        </div>
+
+      </div>
+      <ul class="leg" style="justify-content:center;">
+        <li><i style="background:var(--green)"></i>Success — sound + vibration</li>
+        <li><i style="background:var(--red)"></i>Error / duplicate scan — blocked</li>
+        <li><i style="background:var(--gold)"></i>Offline — submission disabled</li>
+      </ul>
+    </div>
+  </section>
+
+  <footer class="foot">
+    <span>JABLY-WMS · UI DESIGN &amp; MOCKUPS v1</span>
+    <span><a href="#ds">↑ back to top</a></span>
+  </footer>
+
+</div></div>

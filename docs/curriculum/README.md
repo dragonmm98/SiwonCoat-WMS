@@ -8,6 +8,7 @@ documents — open them in any browser (they are theme-aware and print-friendly)
 | [10-day-curriculum.html](./10-day-curriculum.html) | Instructor | The day-by-day plan: objectives, topics, labs, and deliverables. |
 | [lab-workbook.html](./lab-workbook.html) | Student | Per-day worksheets with exact commands, file paths, steps, and checkpoints. |
 | [architecture-reference.html](./architecture-reference.html) | Student | Full context: overview, architecture, all enums, the complete database data dictionary, state machines, and roadmap. |
+| [ui-design.html](./ui-design.html) | Student | UI design reference: design system (tokens, components), app shell, screen mockups, and wireframes for the Day 7–9 screens. |
 
 ## How the course is structured
 
