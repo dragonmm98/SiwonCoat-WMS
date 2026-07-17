@@ -37,7 +37,7 @@ type AuditEntry = {
 };
 
 const DEFAULT_SETTINGS: OperationalSettingsValue = {
-  users: [{ id: "local-admin", name: "Javohir", email: "admin@fulfill.local", role: "Administrator", active: true }],
+  users: [{ id: "local-admin", name: "Javohir", email: "admin@jably.local", role: "Administrator", active: true }],
   allocation: {
     rotation: "FEFO",
     orderPriority: "OLDEST_FIRST",
@@ -180,7 +180,7 @@ export function OperationalSettings({ warehouseId, warehouseName }: { warehouseI
           <label><span>Default printer</span><input value={settings.labels.printer} onChange={(event) => setSettings((current) => ({ ...current, labels: { ...current.labels, printer: event.target.value } }))} placeholder="Browser print dialog" /></label>
           <label><span>Copies per label</span><input type="number" min="1" max="10" value={settings.labels.copies} onChange={(event) => setSettings((current) => ({ ...current, labels: { ...current.labels, copies: Number(event.target.value) } }))} /></label>
           <label className={styles.toggle}><input type="checkbox" checked={settings.labels.autoPrint} onChange={(event) => setSettings((current) => ({ ...current, labels: { ...current.labels, autoPrint: event.target.checked } }))} /><span><strong>Auto-print after confirmation</strong><small>Print when receive, pack, or delivery creation completes.</small></span></label>
-          <div className={styles.labelPreview}><span>FULFILL</span><strong>{warehouseName}</strong><div /><small>{settings.labels.format} · TEST LABEL</small></div>
+          <div className={styles.labelPreview}><span>JABLY</span><strong>{warehouseName}</strong><div /><small>{settings.labels.format} · TEST LABEL</small></div>
         </div>}
 
         {active === "integrations" && <div className={styles.integrationPanel}>

@@ -23,7 +23,7 @@ type WarehouseContextValue = {
   refreshWarehouses: () => Promise<Warehouse[]>;
 };
 
-const STORAGE_KEY = "fulfill-selected-warehouse";
+const STORAGE_KEY = "jably-selected-warehouse";
 const WarehouseContext = createContext<WarehouseContextValue | null>(null);
 
 export function WarehouseProvider({ children }: { children: React.ReactNode }) {

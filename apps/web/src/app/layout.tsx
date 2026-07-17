@@ -6,7 +6,7 @@ import "leaflet/dist/leaflet.css";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: { default: "Fulfill WMS", template: "%s · Fulfill WMS" },
+  title: { default: "Jably WMS", template: "%s · Jably WMS" },
   description:
     "Fast, accurate warehouse operations from receiving to shipment.",
   manifest: "/manifest.webmanifest",

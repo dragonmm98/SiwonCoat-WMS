@@ -2,8 +2,8 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Fulfill Warehouse Management",
-    short_name: "Fulfill WMS",
+    name: "Jably Warehouse Management",
+    short_name: "Jably WMS",
     description: "Warehouse operations from receiving to shipment",
     start_url: "/",
     display: "standalone",

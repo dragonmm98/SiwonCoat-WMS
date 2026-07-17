@@ -1,4 +1,4 @@
-const CACHE = "fulfill-shell-v1";
+const CACHE = "jably-shell-v1";
 const SHELL = ["/", "/scan", "/manifest.webmanifest", "/wms-icon.svg"];
 
 self.addEventListener("install", (event) => {

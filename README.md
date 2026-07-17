@@ -1,4 +1,4 @@
-# Fulfill WMS
+# Jably WMS
 
 A warehouse management system MVP built as a NestJS modular monolith with a responsive Next.js scanner PWA.
 
