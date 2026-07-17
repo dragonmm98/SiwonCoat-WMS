@@ -1,0 +1,356 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum LocationType {
+  RECEIVING
+  STORAGE
+  PICKING
+  PACKING
+  SHIPPING
+  QUARANTINE
+}
+
+enum LocationStatus {
+  ACTIVE
+  BLOCKED
+  INACTIVE
+}
+
+enum TrackingPolicy {
+  NONE
+  LOT
+  SERIAL
+}
+
+enum InventoryStatus {
+  AVAILABLE
+  DAMAGED
+  QUARANTINED
+  EXPIRED
+}
+
+enum InventoryTransactionType {
+  RECEIPT
+  MOVE
+  RESERVATION
+  RELEASE
+  PICK
+  SHIPMENT
+  RETURN
+  ADJUSTMENT
+}
+
+enum OrderStatus {
+  DRAFT
+  READY_TO_ALLOCATE
+  ALLOCATED
+  PICKING
+  PICKED
+  PACKED
+  SHIPPED
+  CANCELLED
+}
+
+enum PurchaseOrderStatus {
+  DRAFT
+  OPEN
+  PARTIALLY_RECEIVED
+  RECEIVED
+  CLOSED
+  CANCELLED
+}
+
+enum TaskStatus {
+  OPEN
+  ASSIGNED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+  EXCEPTION
+}
+
+enum DeliveryStatus {
+  CREATED
+  PICKED_UP
+  IN_TRANSIT
+  OUT_FOR_DELIVERY
+  DELIVERED
+  FAILED
+  CANCELLED
+}
+
+model Warehouse {
+  id             String             @id @default(uuid()) @db.Uuid
+  code           String             @unique
+  name           String
+  timezone       String             @default("Asia/Seoul")
+  address        String?
+  latitude       Float?
+  longitude      Float?
+  operationalSettings Json         @default("{}")
+  active         Boolean            @default(true)
+  createdAt      DateTime           @default(now())
+  updatedAt      DateTime           @updatedAt
+  zones          Zone[]
+  balances       InventoryBalance[]
+  purchaseOrders PurchaseOrder[]
+}
+
+model Zone {
+  id          String     @id @default(uuid()) @db.Uuid
+  warehouseId String     @db.Uuid
+  code        String
+  name        String
+  sequence    Int        @default(0)
+  warehouse   Warehouse  @relation(fields: [warehouseId], references: [id], onDelete: Restrict)
+  locations   Location[]
+
+  @@unique([warehouseId, code])
+  @@index([warehouseId, sequence])
+}
+
+model Location {
+  id          String             @id @default(uuid()) @db.Uuid
+  zoneId      String             @db.Uuid
+  code        String
+  barcode     String             @unique
+  type        LocationType
+  status      LocationStatus     @default(ACTIVE)
+  sequence    Int                @default(0)
+  maxWeightKg Decimal?           @db.Decimal(12, 3)
+  zone        Zone               @relation(fields: [zoneId], references: [id], onDelete: Restrict)
+  balances    InventoryBalance[]
+
+  @@unique([zoneId, code])
+  @@index([zoneId, sequence])
+}
+
+model Sku {
+  id                 String                 @id @default(uuid()) @db.Uuid
+  code               String                 @unique
+  name               String
+  description        String?
+  trackingPolicy     TrackingPolicy         @default(NONE)
+  expiryTracked      Boolean                @default(false)
+  weightKg           Decimal?               @db.Decimal(12, 3)
+  lengthCm           Decimal?               @db.Decimal(12, 2)
+  widthCm            Decimal?               @db.Decimal(12, 2)
+  heightCm           Decimal?               @db.Decimal(12, 2)
+  active             Boolean                @default(true)
+  createdAt          DateTime               @default(now())
+  updatedAt          DateTime               @updatedAt
+  barcodes           Barcode[]
+  balances           InventoryBalance[]
+  transactions       InventoryTransaction[]
+  orderLines         SalesOrderLine[]
+  purchaseOrderLines PurchaseOrderLine[]
+}
+
+model Barcode {
+  id        String   @id @default(uuid()) @db.Uuid
+  skuId     String   @db.Uuid
+  value     String   @unique
+  symbology String   @default("CODE128")
+  primary   Boolean  @default(false)
+  sku       Sku      @relation(fields: [skuId], references: [id], onDelete: Restrict)
+  createdAt DateTime @default(now())
+
+  @@index([skuId])
+}
+
+model InventoryBalance {
+  id          String          @id @default(uuid()) @db.Uuid
+  warehouseId String          @db.Uuid
+  locationId  String          @db.Uuid
+  skuId       String          @db.Uuid
+  lotNumber   String          @default("")
+  expiresAt   DateTime?
+  status      InventoryStatus @default(AVAILABLE)
+  onHandQty   Decimal         @default(0) @db.Decimal(18, 3)
+  reservedQty Decimal         @default(0) @db.Decimal(18, 3)
+  version     Int             @default(1)
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+  warehouse   Warehouse       @relation(fields: [warehouseId], references: [id], onDelete: Restrict)
+  location    Location        @relation(fields: [locationId], references: [id], onDelete: Restrict)
+  sku         Sku             @relation(fields: [skuId], references: [id], onDelete: Restrict)
+
+  @@unique([locationId, skuId, lotNumber, status])
+  @@index([warehouseId, skuId])
+  @@index([skuId, expiresAt])
+}
+
+model InventoryTransaction {
+  id             String                   @id @default(uuid()) @db.Uuid
+  type           InventoryTransactionType
+  skuId          String                   @db.Uuid
+  fromLocationId String?                  @db.Uuid
+  toLocationId   String?                  @db.Uuid
+  lotNumber      String                   @default("")
+  quantity       Decimal                  @db.Decimal(18, 3)
+  referenceType  String
+  referenceId    String
+  idempotencyKey String                   @unique
+  actorId        String?
+  reason         String?
+  occurredAt     DateTime                 @default(now())
+  sku            Sku                      @relation(fields: [skuId], references: [id], onDelete: Restrict)
+
+  @@index([skuId, occurredAt])
+  @@index([referenceType, referenceId])
+}
+
+model SalesOrder {
+  id          String             @id @default(uuid()) @db.Uuid
+  orderNumber String             @unique
+  status      OrderStatus        @default(DRAFT)
+  priority    Int                @default(0)
+  recipient   String
+  address     Json
+  version     Int                @default(1)
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+  lines       SalesOrderLine[]
+  shipments   DeliveryShipment[]
+}
+
+model SalesOrderLine {
+  id           String     @id @default(uuid()) @db.Uuid
+  orderId      String     @db.Uuid
+  skuId        String     @db.Uuid
+  orderedQty   Decimal    @db.Decimal(18, 3)
+  allocatedQty Decimal    @default(0) @db.Decimal(18, 3)
+  pickedQty    Decimal    @default(0) @db.Decimal(18, 3)
+  order        SalesOrder @relation(fields: [orderId], references: [id], onDelete: Restrict)
+  sku          Sku        @relation(fields: [skuId], references: [id], onDelete: Restrict)
+
+  @@unique([orderId, skuId])
+  @@index([skuId])
+}
+
+model PurchaseOrder {
+  id                String              @id @default(uuid()) @db.Uuid
+  orderNumber       String              @unique
+  warehouseId       String              @db.Uuid
+  supplierName      String
+  supplierReference String?
+  expectedAt        DateTime
+  receivingDock     String?
+  priority          Int                 @default(0)
+  status            PurchaseOrderStatus @default(DRAFT)
+  notes             String?
+  version           Int                 @default(1)
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  warehouse         Warehouse           @relation(fields: [warehouseId], references: [id], onDelete: Restrict)
+  lines             PurchaseOrderLine[]
+
+  @@index([warehouseId, status, expectedAt])
+  @@index([supplierName])
+}
+
+model PurchaseOrderLine {
+  id              String        @id @default(uuid()) @db.Uuid
+  purchaseOrderId String        @db.Uuid
+  skuId           String        @db.Uuid
+  expectedQty     Decimal       @db.Decimal(18, 3)
+  receivedQty     Decimal       @default(0) @db.Decimal(18, 3)
+  unit            String        @default("EA")
+  notes           String?
+  purchaseOrder   PurchaseOrder @relation(fields: [purchaseOrderId], references: [id], onDelete: Restrict)
+  sku             Sku           @relation(fields: [skuId], references: [id], onDelete: Restrict)
+
+  @@unique([purchaseOrderId, skuId])
+  @@index([skuId])
+}
+
+model OperationalTask {
+  id            String     @id @default(uuid()) @db.Uuid
+  type          String
+  status        TaskStatus @default(OPEN)
+  priority      Int        @default(0)
+  warehouseId   String     @db.Uuid
+  assigneeId    String?
+  referenceType String
+  referenceId   String
+  payload       Json
+  version       Int        @default(1)
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+
+  @@index([warehouseId, status, priority])
+  @@index([assigneeId, status])
+}
+
+model DeliveryShipment {
+  id                  String          @id @default(uuid()) @db.Uuid
+  orderId             String          @db.Uuid
+  provider            String          @default("SANDBOX")
+  service             String          @default("STANDARD")
+  trackingNumber      String          @unique
+  status              DeliveryStatus  @default(CREATED)
+  estimatedDeliveryAt DateTime?
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
+  order               SalesOrder      @relation(fields: [orderId], references: [id], onDelete: Restrict)
+  events              DeliveryEvent[]
+
+  @@index([orderId])
+  @@index([status, createdAt])
+}
+
+model DeliveryEvent {
+  id          String           @id @default(uuid()) @db.Uuid
+  shipmentId  String           @db.Uuid
+  status      DeliveryStatus
+  description String
+  location    String?
+  occurredAt  DateTime         @default(now())
+  shipment    DeliveryShipment @relation(fields: [shipmentId], references: [id], onDelete: Cascade)
+
+  @@index([shipmentId, occurredAt])
+}
+
+model AuditLog {
+  id           String   @id @default(uuid()) @db.Uuid
+  actorId      String?
+  action       String
+  resourceType String
+  resourceId   String
+  before       Json?
+  after        Json?
+  requestId    String?
+  createdAt    DateTime @default(now())
+
+  @@index([resourceType, resourceId, createdAt])
+}
+
+model IdempotencyKey {
+  key         String   @id
+  scope       String
+  requestHash String
+  statusCode  Int
+  response    Json
+  createdAt   DateTime @default(now())
+  expiresAt   DateTime
+
+  @@index([expiresAt])
+}
+
+model OutboxEvent {
+  id          String    @id @default(uuid()) @db.Uuid
+  topic       String
+  aggregateId String
+  payload     Json
+  createdAt   DateTime  @default(now())
+  publishedAt DateTime?
+  attempts    Int       @default(0)
+
+  @@index([publishedAt, createdAt])
+}

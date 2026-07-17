@@ -1,0 +1,128 @@
+.map {
+  position: relative;
+  z-index: 0;
+  display: block;
+  width: 100%;
+  height: 430px;
+  border-top: 1px solid #dfe5e1;
+  border-bottom: 1px solid #dfe5e1;
+  background: #e9efec;
+}
+
+.markerShell {
+  border: 0;
+  background: transparent;
+}
+
+.marker {
+  position: relative;
+  display: block;
+  width: 32px;
+  height: 32px;
+  border: 3px solid white;
+  border-radius: 50% 50% 50% 0;
+  background: #28775e;
+  box-shadow: 0 3px 12px #172a2455;
+  transform: rotate(-45deg);
+}
+
+.focusedMarker {
+  background: #e1ae27;
+  box-shadow: 0 0 0 5px #f0c75e55, 0 3px 12px #172a2455;
+}
+
+.marker i {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  width: 10px;
+  height: 10px;
+  border: 2px solid white;
+  border-radius: 2px;
+}
+
+.popup strong,
+.popup span,
+.popup small {
+  display: block;
+}
+
+.popup strong {
+  color: #28775e;
+  font-size: 11px;
+}
+
+.popup span {
+  margin-top: 3px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.popup small {
+  margin-top: 4px;
+  color: #68756f;
+  font-size: 9px;
+}
+
+.legend {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  padding: 12px 18px;
+}
+
+.legend button {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 9px;
+  padding: 9px 10px;
+  border: 1px solid #dce5e0;
+  border-radius: 8px;
+  color: #1d2924;
+  background: #f9fbfa;
+  text-align: left;
+  cursor: pointer;
+}
+
+.legend button.focusedLegend {
+  border-color: #dfbd60;
+  background: #fff9e8;
+}
+
+.legend button > span {
+  color: #28775e;
+  font-size: 15px;
+}
+
+.legend button div {
+  min-width: 0;
+}
+
+.legend strong,
+.legend small {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.legend strong {
+  font-size: 9px;
+}
+
+.legend small {
+  margin-top: 2px;
+  color: #68756f;
+  font-size: 8px;
+}
+
+@media (max-width: 760px) {
+  .map {
+    height: 300px;
+  }
+
+  .legend {
+    grid-template-columns: 1fr;
+  }
+}
