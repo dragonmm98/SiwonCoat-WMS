@@ -1,0 +1,866 @@
+<title>Jably WMS — Architecture &amp; Reference</title>
+
+<style>
+  :root {
+    --paper:#f7f5f1; --paper-2:#efece5; --card:#ffffff; --ink:#1b1e22; --ink-2:#3a3f45;
+    --muted:#6c655d; --line:#e0dbd2; --line-2:#d3ccc0; --amber:#e8630a; --amber-soft:#fbe9dc;
+    --steel:#2f6e8e; --steel-soft:#e2edf2; --good:#2f7d4f; --good-soft:#e4f0e8; --crit:#b23a2e; --crit-soft:#f6e4e1;
+    --violet:#6b5ca5; --violet-soft:#ece8f4;
+    --shadow:0 1px 2px rgba(27,30,34,.05),0 8px 24px rgba(27,30,34,.06);
+    --mono:ui-monospace,"SF Mono","SFMono-Regular","Menlo","Consolas",monospace;
+    --sans:system-ui,-apple-system,"Segoe UI","Helvetica Neue",Arial,sans-serif;
+  }
+  @media (prefers-color-scheme:dark){:root{
+    --paper:#16181b; --paper-2:#1b1e22; --card:#21252a; --ink:#f0ede7; --ink-2:#c4c0b8;
+    --muted:#928b81; --line:#2e333a; --line-2:#3a4048; --amber:#ff7d2e; --amber-soft:#3a2513;
+    --steel:#6fb4d6; --steel-soft:#16303c; --good:#5fb380; --good-soft:#16301f; --crit:#e0796d; --crit-soft:#331815;
+    --violet:#a99ad6; --violet-soft:#221d33;
+    --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 30px rgba(0,0,0,.35);
+  }}
+  :root[data-theme="light"]{
+    --paper:#f7f5f1; --paper-2:#efece5; --card:#ffffff; --ink:#1b1e22; --ink-2:#3a3f45;
+    --muted:#6c655d; --line:#e0dbd2; --line-2:#d3ccc0; --amber:#e8630a; --amber-soft:#fbe9dc;
+    --steel:#2f6e8e; --steel-soft:#e2edf2; --good:#2f7d4f; --good-soft:#e4f0e8; --crit:#b23a2e; --crit-soft:#f6e4e1;
+    --violet:#6b5ca5; --violet-soft:#ece8f4;
+    --shadow:0 1px 2px rgba(27,30,34,.05),0 8px 24px rgba(27,30,34,.06);
+  }
+  :root[data-theme="dark"]{
+    --paper:#16181b; --paper-2:#1b1e22; --card:#21252a; --ink:#f0ede7; --ink-2:#c4c0b8;
+    --muted:#928b81; --line:#2e333a; --line-2:#3a4048; --amber:#ff7d2e; --amber-soft:#3a2513;
+    --steel:#6fb4d6; --steel-soft:#16303c; --good:#5fb380; --good-soft:#16301f; --crit:#e0796d; --crit-soft:#331815;
+    --violet:#a99ad6; --violet-soft:#221d33;
+    --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 30px rgba(0,0,0,.35);
+  }
+
+  *{box-sizing:border-box;} body{margin:0;}
+  .page{font-family:var(--sans); background:var(--paper); color:var(--ink); line-height:1.6; -webkit-font-smoothing:antialiased; padding:clamp(20px,4vw,48px) clamp(16px,4vw,40px) 80px;}
+  .wrap{max-width:980px; margin:0 auto;}
+  .eyebrow{font-family:var(--mono); font-size:12px; letter-spacing:.18em; text-transform:uppercase; color:var(--amber); font-weight:600;}
+
+  header.hero{border:1px solid var(--line); border-radius:14px; background:var(--card); box-shadow:var(--shadow); overflow:hidden;}
+  .hero-top{padding:clamp(24px,4vw,38px) clamp(24px,4vw,40px); position:relative; padding-left:clamp(32px,5vw,52px);}
+  .hero-top::before{content:""; position:absolute; inset:0 auto 0 0; width:6px; background:repeating-linear-gradient(45deg,var(--amber) 0 10px,var(--ink) 10px 20px);}
+  h1{font-size:clamp(28px,4.6vw,44px); line-height:1.03; letter-spacing:-.02em; margin:12px 0 8px; text-wrap:balance; font-weight:800;}
+  h1 .sub{color:var(--muted); font-weight:500;}
+  .lede{font-size:clamp(14.5px,1.5vw,16.5px); color:var(--ink-2); max-width:66ch; margin:0;}
+  .hero-meta{display:grid; grid-template-columns:repeat(4,1fr); gap:1px; background:var(--line); border-top:1px solid var(--line);}
+  .hero-meta .m{background:var(--card); padding:13px clamp(14px,3vw,22px);}
+  .hero-meta .k{font-family:var(--mono); font-size:10px; letter-spacing:.13em; text-transform:uppercase; color:var(--muted); display:block; margin-bottom:3px;}
+  .hero-meta .v{font-size:13.5px; font-weight:650;}
+  @media(max-width:640px){.hero-meta{grid-template-columns:repeat(2,1fr);}}
+
+  nav.index{margin:24px 0 8px; display:grid; grid-template-columns:repeat(3,1fr); gap:10px;}
+  nav.index a{display:block; text-decoration:none; border:1px solid var(--line); border-radius:10px; background:var(--card); box-shadow:var(--shadow); padding:13px 15px; color:var(--ink);}
+  nav.index a:hover{border-color:var(--amber);}
+  nav.index .n{font-family:var(--mono); font-size:11px; color:var(--amber); font-weight:700; letter-spacing:.06em;}
+  nav.index .t{display:block; font-size:13.5px; font-weight:650; margin-top:3px;}
+  @media(max-width:640px){nav.index{grid-template-columns:repeat(2,1fr);}}
+
+  section.block{margin-top:34px; scroll-margin-top:14px;}
+  .sec-head{display:flex; align-items:baseline; gap:12px; margin:0 0 4px;}
+  .sec-head .num{font-family:var(--mono); font-size:13px; font-weight:700; color:var(--amber);}
+  .sec-head h2{font-size:23px; margin:0; letter-spacing:-.01em; font-weight:770;}
+  .sec-sub{color:var(--muted); font-size:14px; margin:0 0 16px; max-width:74ch;}
+  .card{background:var(--card); border:1px solid var(--line); border-radius:14px; box-shadow:var(--shadow); padding:clamp(18px,3vw,26px);}
+  .mono{font-family:var(--mono); font-size:.86em; background:var(--paper-2); border:1px solid var(--line); padding:1px 5px; border-radius:4px; color:var(--ink); white-space:nowrap;}
+  h3.subh{font-size:14px; margin:22px 0 10px; letter-spacing:.02em; font-weight:750; display:flex; align-items:center; gap:9px;}
+  h3.subh:first-child{margin-top:0;}
+  h3.subh::before{content:""; width:8px; height:8px; border-radius:2px; background:var(--amber);}
+  p.para{font-size:14.5px; color:var(--ink-2); margin:0 0 12px;}
+  p.para b{color:var(--ink);}
+
+  /* feature two-col lists */
+  .split{display:grid; grid-template-columns:1fr 1fr; gap:16px;}
+  @media(max-width:640px){.split{grid-template-columns:1fr;}}
+  ul.ticks, ul.crosses{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:5px;}
+  ul.ticks li, ul.crosses li{font-size:13.5px; color:var(--ink-2); padding-left:22px; position:relative;}
+  ul.ticks li::before{content:"✓"; position:absolute; left:0; color:var(--good); font-weight:700;}
+  ul.crosses li::before{content:"→"; position:absolute; left:0; color:var(--muted);}
+  .mini-h{font-family:var(--mono); font-size:10.5px; letter-spacing:.12em; text-transform:uppercase; margin:0 0 8px;}
+  .mini-h.in{color:var(--good);} .mini-h.out{color:var(--muted);}
+
+  /* stack table */
+  .stack{display:grid; grid-template-columns:auto 1fr auto; gap:0; font-size:13.5px;}
+  .stack .r{display:contents;}
+  .stack .r > div{padding:8px 12px; border-bottom:1px solid var(--line);}
+  .stack .r:last-child > div{border-bottom:none;}
+  .stack .cc{font-family:var(--mono); font-size:11.5px; color:var(--muted); white-space:nowrap;}
+  .stack .vv{color:var(--ink); font-weight:550;}
+  .stack .st{text-align:right; font-family:var(--mono); font-size:9.5px; letter-spacing:.08em; text-transform:uppercase; white-space:nowrap; align-self:center;}
+  .st .built{color:var(--good);} .st .plan{color:var(--amber);}
+
+  /* module grid */
+  .mods{display:grid; grid-template-columns:repeat(auto-fill,minmax(215px,1fr)); gap:10px;}
+  .mod{border:1px solid var(--line); border-radius:9px; padding:11px 13px; background:var(--card);}
+  .mod b{font-family:var(--mono); font-size:12.5px; color:var(--steel);}
+  .mod .tag{float:right; font-family:var(--mono); font-size:9px; letter-spacing:.06em; text-transform:uppercase; color:var(--amber);}
+  .mod p{margin:5px 0 0; font-size:12.5px; color:var(--ink-2);}
+
+  /* conventions */
+  .conv{display:flex; flex-direction:column; gap:9px;}
+  .conv .c{display:grid; grid-template-columns:150px 1fr; gap:12px; font-size:13.5px; padding-bottom:9px; border-bottom:1px dashed var(--line);}
+  .conv .c:last-child{border-bottom:none;}
+  .conv .c b{font-family:var(--mono); font-size:12px; color:var(--ink);}
+  .conv .c span{color:var(--ink-2);}
+  @media(max-width:560px){.conv .c{grid-template-columns:1fr; gap:2px;}}
+
+  /* glossary */
+  .glo{display:grid; grid-template-columns:repeat(auto-fill,minmax(230px,1fr)); gap:10px 18px;}
+  .glo dt{font-family:var(--mono); font-size:12px; font-weight:700; color:var(--amber); }
+  .glo dd{margin:2px 0 0; font-size:12.5px; color:var(--ink-2);}
+
+  /* architecture stack */
+  .layer{border:1px dashed var(--line-2); border-radius:11px; padding:12px 14px 14px; margin-bottom:12px; background:color-mix(in srgb,var(--paper-2) 55%, transparent);}
+  .layer:last-child{margin-bottom:0;}
+  .layer .ltag{font-family:var(--mono); font-size:10px; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); margin-bottom:9px; display:block;}
+  .row{display:flex; gap:10px; flex-wrap:wrap;}
+  .node{flex:1 1 150px; min-width:128px; border:1px solid var(--line); border-radius:9px; background:var(--card); padding:11px 13px;}
+  .node b{display:block; font-size:14px;} .node small{color:var(--muted); font-size:12px; font-family:var(--mono);}
+  .node.api{border-color:color-mix(in srgb,var(--steel) 40%,var(--line)); background:var(--steel-soft);} .node.api b{color:var(--steel);}
+  .node.data{border-color:color-mix(in srgb,var(--good) 40%,var(--line)); background:var(--good-soft);} .node.data b{color:var(--good);}
+  .node.plat{border-color:color-mix(in srgb,var(--violet) 40%,var(--line)); background:var(--violet-soft);} .node.plat b{color:var(--violet);}
+  .flowdown{text-align:center; color:var(--line-2); font-size:18px; line-height:1; margin:-4px 0 8px;}
+  .legend{display:flex; gap:14px; flex-wrap:wrap; margin-top:12px; font-family:var(--mono); font-size:11px; color:var(--muted);}
+  .legend span{display:inline-flex; align-items:center; gap:6px;} .legend i{width:11px; height:11px; border-radius:3px; display:inline-block;}
+
+  .flowsteps{counter-reset:fs; margin-top:6px; display:flex; flex-direction:column;}
+  .fstep{display:grid; grid-template-columns:32px 1fr; gap:14px; padding:9px 0; border-bottom:1px dashed var(--line);}
+  .fstep:last-child{border-bottom:none;}
+  .fstep .b{counter-increment:fs; width:26px; height:26px; border-radius:7px; background:var(--amber-soft); color:var(--amber); font-family:var(--mono); font-weight:700; font-size:13px; display:flex; align-items:center; justify-content:center; border:1px solid color-mix(in srgb,var(--amber) 30%,transparent);}
+  .fstep .b::before{content:counter(fs);}
+  .fstep .txt{font-size:14px; color:var(--ink-2); align-self:center;} .fstep .txt b{color:var(--ink);}
+  .note{margin-top:14px; font-size:13px; color:var(--ink-2); border-left:3px solid var(--amber); padding:5px 0 5px 12px;} .note b{color:var(--ink);}
+
+  /* enums */
+  .enums{display:grid; grid-template-columns:repeat(auto-fill,minmax(255px,1fr)); gap:11px;}
+  .enum{border:1px solid var(--line); border-radius:9px; overflow:hidden; background:var(--card);}
+  .enum .eh{font-family:var(--mono); font-size:12px; font-weight:700; padding:8px 11px; background:var(--paper-2); border-bottom:1px solid var(--line); color:var(--ink);}
+  .enum .ev{padding:9px 11px; display:flex; flex-wrap:wrap; gap:5px;}
+  .enum .ev span{font-family:var(--mono); font-size:10.5px; padding:2px 7px; border-radius:5px; background:var(--steel-soft); color:var(--steel); border:1px solid color-mix(in srgb,var(--steel) 20%,transparent);}
+  .enum .ev span.term{background:var(--good-soft); color:var(--good); border-color:color-mix(in srgb,var(--good) 25%,transparent);}
+  .enum .ev span.bad{background:var(--crit-soft); color:var(--crit); border-color:color-mix(in srgb,var(--crit) 25%,transparent);}
+
+  /* data dictionary */
+  .domain-label{display:flex; align-items:center; gap:9px; margin:22px 0 12px;}
+  .domain-label:first-child{margin-top:0;}
+  .domain-label .dot{width:11px; height:11px; border-radius:3px;}
+  .domain-label h3{font-size:13px; margin:0; letter-spacing:.06em; font-weight:750; font-family:var(--mono); text-transform:uppercase;}
+  .domain-label .rule{flex:1; height:1px; background:var(--line);}
+  .tbl{border:1px solid var(--line); border-radius:10px; overflow:hidden; margin-bottom:13px; background:var(--card);}
+  .tbl .th{display:flex; justify-content:space-between; align-items:baseline; gap:10px; padding:10px 13px; background:var(--paper-2); border-bottom:1px solid var(--line); flex-wrap:wrap;}
+  .tbl .th b{font-family:var(--mono); font-size:13.5px; color:var(--ink);}
+  .tbl .th .rel{font-family:var(--mono); font-size:11px; color:var(--muted);}
+  .tbl .th .rel a{color:var(--steel); text-decoration:none;}
+  .scrollx{overflow-x:auto;}
+  table.dt{width:100%; border-collapse:collapse; font-size:12.5px; min-width:440px;}
+  table.dt th{text-align:left; font-family:var(--mono); font-size:9.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); padding:7px 13px; border-bottom:1px solid var(--line); font-weight:600; background:var(--card);}
+  table.dt td{padding:5px 13px; border-bottom:1px solid var(--line); vertical-align:top;}
+  table.dt tr:last-child td{border-bottom:none;}
+  td.col{font-family:var(--mono); color:var(--ink); font-weight:600; white-space:nowrap;}
+  td.ty{font-family:var(--mono); color:var(--steel); font-size:11.5px; white-space:nowrap;}
+  td.nt{color:var(--muted); font-size:12px;}
+  .kk{display:inline-block; font-family:var(--mono); font-size:8.5px; font-weight:700; letter-spacing:.05em; padding:1px 4px; border-radius:3px; margin-left:5px; vertical-align:middle;}
+  .kk.pk{background:var(--amber-soft); color:var(--amber);}
+  .kk.fk{background:var(--steel-soft); color:var(--steel);}
+  .kk.uq{background:var(--violet-soft); color:var(--violet);}
+  .tbl .cons{padding:8px 13px; border-top:1px solid var(--line); font-family:var(--mono); font-size:10.5px; color:var(--muted); line-height:1.7;}
+  .tbl .cons b{color:var(--ink-2); font-weight:600;}
+
+  /* state machines */
+  .sm{margin-bottom:22px;} .sm:last-child{margin-bottom:0;}
+  .sm-title{display:flex; align-items:center; gap:8px; margin:0 0 4px; flex-wrap:wrap;}
+  .sm-title b{font-size:14.5px;} .sm-title .path{font-family:var(--mono); font-size:11px; color:var(--muted);}
+  .scrollpad{overflow-x:auto; padding:6px 2px 10px;}
+  .flow{display:flex; align-items:center; width:max-content;}
+  .state{flex:none; font-family:var(--mono); font-size:12px; font-weight:650; padding:9px 13px; border-radius:8px; border:1px solid var(--line-2); background:var(--card); white-space:nowrap;}
+  .state.start{border-color:color-mix(in srgb,var(--steel) 45%,var(--line)); background:var(--steel-soft); color:var(--steel);}
+  .state.win{border-color:color-mix(in srgb,var(--good) 45%,var(--line)); background:var(--good-soft); color:var(--good);}
+  .edge{flex:none; display:flex; flex-direction:column; align-items:center; padding:0 4px; min-width:64px;}
+  .edge .lab{font-size:10px; font-family:var(--mono); color:var(--amber); margin-bottom:1px; text-align:center; line-height:1.2;}
+  .edge .ar{color:var(--line-2); font-size:15px; line-height:1;}
+  .branch{font-size:12.5px; color:var(--ink-2); margin:2px 0 0; font-family:var(--mono);}
+  .branch .x{color:var(--crit); font-weight:700;} .branch .self{color:var(--amber);}
+  .ledger{display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:9px; margin-top:6px;}
+  .lx{border:1px solid var(--line); border-radius:8px; padding:9px 11px; background:var(--card);}
+  .lx b{font-family:var(--mono); font-size:12px; color:var(--ink);} .lx p{margin:3px 0 0; font-size:12px; color:var(--muted);}
+
+  /* roadmap */
+  .rm-scroll{overflow-x:auto; padding-bottom:10px;}
+  .rm{display:grid; grid-auto-flow:column; grid-auto-columns:minmax(112px,1fr); gap:8px; width:max-content; min-width:100%;}
+  .rmcol{border:1px solid var(--line); border-radius:10px; background:var(--card); padding:11px; display:flex; flex-direction:column; gap:6px;}
+  .rmcol.crux{border-color:var(--amber); background:var(--amber-soft);}
+  .rmday{font-family:var(--mono); font-size:11px; color:var(--amber); font-weight:700;}
+  .rmt{font-size:12.5px; font-weight:650; line-height:1.25;}
+  .rmp{margin-top:auto; font-family:var(--mono); font-size:9px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted);}
+  .lifebar{display:flex; gap:6px; flex-wrap:wrap; margin-top:16px; align-items:center;}
+  .life{font-family:var(--mono); font-size:11.5px; font-weight:650; padding:6px 11px; border-radius:20px; background:var(--steel-soft); color:var(--steel); border:1px solid color-mix(in srgb,var(--steel) 25%,transparent);}
+  .life-ar{color:var(--line-2);}
+
+  footer.foot{margin-top:38px; padding-top:18px; border-top:1px solid var(--line); display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap; font-family:var(--mono); font-size:11px; letter-spacing:.04em; color:var(--muted);}
+  a.top{color:var(--steel); text-decoration:none;}
+</style>
+
+<div class="page"><div class="wrap">
+
+  <header class="hero">
+    <div class="hero-top">
+      <span class="eyebrow">Student Reference · Full Context &amp; Data Dictionary</span>
+      <h1>Jably WMS<br><span class="sub">Architecture &amp; reference</span></h1>
+      <p class="lede">Everything a student needs to orient before writing code: what the system is, how it's
+        built, the conventions that keep inventory correct, the complete database schema, the workflow
+        state machines, and how the ten days map onto it. Grounded in the actual repository.</p>
+    </div>
+    <div class="hero-meta">
+      <div class="m"><span class="k">Backend</span><span class="v">NestJS · /api/v1</span></div>
+      <div class="m"><span class="k">Frontend</span><span class="v">Next.js PWA</span></div>
+      <div class="m"><span class="k">Data</span><span class="v">PostgreSQL · Prisma</span></div>
+      <div class="m"><span class="k">Tables</span><span class="v">16 models · 9 enums</span></div>
+    </div>
+  </header>
+
+  <nav class="index">
+    <a href="#ctx"><span class="n">01</span><span class="t">Overview &amp; context</span></a>
+    <a href="#arch"><span class="n">02</span><span class="t">Architecture &amp; data flow</span></a>
+    <a href="#enums"><span class="n">03</span><span class="t">Enumerations</span></a>
+    <a href="#schema"><span class="n">04</span><span class="t">Database schema (full)</span></a>
+    <a href="#sm"><span class="n">05</span><span class="t">State machines</span></a>
+    <a href="#road"><span class="n">06</span><span class="t">10-day roadmap</span></a>
+  </nav>
+
+  <!-- ============ 1. OVERVIEW & CONTEXT ============ -->
+  <section class="block" id="ctx">
+    <div class="sec-head"><span class="num">01</span><h2>Overview &amp; context</h2></div>
+    <p class="sec-sub">Read this first. It frames everything else — what you're building, the boundary of the MVP, the stack, and the non-negotiable rules that keep inventory trustworthy.</p>
+    <div class="card">
+
+      <h3 class="subh">What Jably WMS is</h3>
+      <p class="para">Jably WMS is a <b>warehouse management system</b> that runs the full inventory lifecycle for a fulfillment center: setting up the physical warehouse, registering products, receiving supplier deliveries, storing stock, and picking, packing, and shipping customer orders. It is built as a <b>modular monolith</b> — one deployable NestJS backend with clear internal module boundaries — plus one <b>Next.js progressive web app</b> that serves both the desktop operations console and the touch-friendly scanner screens. There is no separate mobile app; the same web codebase adapts to warehouse scanner hardware.</p>
+      <p class="para">The guiding principle is <b>inventory correctness</b>. Physical stock is money, and two workers must never be able to sell or move the same unit twice. Every design choice below exists to protect that.</p>
+
+      <h3 class="subh">MVP scope</h3>
+      <div class="split">
+        <div>
+          <p class="mini-h in">In scope</p>
+          <ul class="ticks">
+            <li>Warehouse, zone, and bin/location setup</li>
+            <li>SKU and barcode registration (lot / expiry tracking)</li>
+            <li>Purchase-order receiving &amp; putaway</li>
+            <li>Inventory lookup by SKU, barcode, lot, location</li>
+            <li>Sales orders, reservation, FIFO/FEFO allocation</li>
+            <li>Pick, pack, label, ship workflows</li>
+            <li>Immutable audit trail &amp; ledger history</li>
+          </ul>
+        </div>
+        <div>
+          <p class="mini-h out">Deferred (later phases)</p>
+          <ul class="crosses">
+            <li>Multi-warehouse routing &amp; inventory promises</li>
+            <li>Automated slotting &amp; demand forecasting</li>
+            <li>Wave/zone/batch picking optimization</li>
+            <li>Carrier, OMS, and robotics integrations</li>
+            <li>Cycle counting &amp; replenishment rules</li>
+            <li>Extraction into microservices</li>
+          </ul>
+        </div>
+      </div>
+
+      <h3 class="subh">Technology stack</h3>
+      <div class="stack">
+        <div class="r"><div class="cc">Monorepo</div><div class="vv">pnpm workspaces + Turborepo</div><div class="st"><span class="built">built</span></div></div>
+        <div class="r"><div class="cc">Web / scanner</div><div class="vv">Next.js (App Router), React, Tailwind, TanStack Query</div><div class="st"><span class="built">built</span></div></div>
+        <div class="r"><div class="cc">API</div><div class="vv">NestJS REST, versioned <span class="mono">/api/v1</span>, OpenAPI at <span class="mono">/docs</span></div><div class="st"><span class="built">built</span></div></div>
+        <div class="r"><div class="cc">Database</div><div class="vv">PostgreSQL + Prisma ORM &amp; migrations</div><div class="st"><span class="built">built</span></div></div>
+        <div class="r"><div class="cc">Barcode input</div><div class="vv">Keyboard-wedge first, camera (ZXing) fallback</div><div class="st"><span class="built">built</span></div></div>
+        <div class="r"><div class="cc">Object storage</div><div class="vv">S3-compatible (MinIO in dev)</div><div class="st"><span class="built">built</span></div></div>
+        <div class="r"><div class="cc">Auth</div><div class="vv">Short-lived JWT + rotating refresh, warehouse-scoped RBAC</div><div class="st"><span class="plan">planned</span></div></div>
+        <div class="r"><div class="cc">Jobs</div><div class="vv">Redis + BullMQ (labels, projections, notifications)</div><div class="st"><span class="plan">planned</span></div></div>
+        <div class="r"><div class="cc">Live updates</div><div class="vv">Socket.IO operational status</div><div class="st"><span class="plan">planned</span></div></div>
+        <div class="r"><div class="cc">Local env</div><div class="vv">Docker Compose — Postgres, Redis, MinIO</div><div class="st"><span class="built">built</span></div></div>
+      </div>
+      <p class="note"><b>Honesty note for students:</b> the API, web app, and full database schema exist today. Auth/RBAC, BullMQ jobs, and Socket.IO are planned — several course days task you with building the pieces that aren't there yet (receiving, allocation).</p>
+
+      <h3 class="subh">Repository layout</h3>
+      <div class="stack">
+        <div class="r"><div class="cc">apps/api</div><div class="vv">NestJS application &amp; modules</div><div class="st"></div></div>
+        <div class="r"><div class="cc">apps/web</div><div class="vv">Next.js console + scanner PWA</div><div class="st"></div></div>
+        <div class="r"><div class="cc">packages/database</div><div class="vv">Prisma schema, migrations, seed</div><div class="st"></div></div>
+        <div class="r"><div class="cc">docs/adr</div><div class="vv">architecture decision records</div><div class="st"></div></div>
+        <div class="r"><div class="cc">infra · compose.yaml</div><div class="vv">local services</div><div class="st"></div></div>
+      </div>
+
+      <h3 class="subh">API modules &amp; what each owns</h3>
+      <div class="mods">
+        <div class="mod"><b>warehouse</b><p>Warehouses, zones, locations, operational settings, audit-log read.</p></div>
+        <div class="mod"><b>catalog</b><p>SKUs, barcodes, dimensions, tracking policy, CSV import.</p></div>
+        <div class="mod"><b>inventory</b><p>Balances, the append-only ledger, adjustments. The kernel.</p></div>
+        <div class="mod"><b>inbound</b><p>Purchase orders &amp; lines. <span class="tag">receiving = to build</span></p></div>
+        <div class="mod"><b>outbound</b><p>Sales orders &amp; lines. <span class="tag">allocation = to build</span></p></div>
+        <div class="mod"><b>deliveries</b><p>Shipments &amp; tracking events (sandbox provider).</p></div>
+        <div class="mod"><b>tasks</b><p>Generic operational work items &amp; assignment.</p></div>
+        <div class="mod"><b>health</b><p>Liveness &amp; readiness probes.</p></div>
+      </div>
+
+      <h3 class="subh">Core conventions &amp; invariants</h3>
+      <div class="conv">
+        <div class="c"><b>UUID keys</b><span>Every operational row uses a UUID primary key.</span></div>
+        <div class="c"><b>Decimal quantities</b><span>Stock quantities are <span class="mono">Decimal(18,3)</span> — never floating point.</span></div>
+        <div class="c"><b>Optimistic version</b><span>Concurrency-sensitive rows carry <span class="mono">version</span>; updates guard on it and increment it.</span></div>
+        <div class="c"><b>Append-only ledger</b><span>Every stock change writes an <span class="mono">InventoryTransaction</span> in the same DB transaction as the balance mutation.</span></div>
+        <div class="c"><b>availableQty</b><span>Always derived as <span class="mono">onHandQty − reservedQty</span>; never stored or edited directly.</span></div>
+        <div class="c"><b>Idempotency</b><span>Scanner mutations carry a key; replays return the original result instead of doubling up.</span></div>
+        <div class="c"><b>Transactional outbox</b><span>Events for jobs/sockets/projections are written in the same transaction, not fired directly.</span></div>
+        <div class="c"><b>No hard deletes</b><span>All FKs are <span class="mono">onDelete: Restrict</span>; state changes via named commands, never destructive deletes.</span></div>
+        <div class="c"><b>Named commands</b><span>State transitions happen through explicit commands (approve, allocate, pick…), not generic CRUD updates.</span></div>
+      </div>
+
+      <h3 class="subh">Glossary</h3>
+      <dl class="glo">
+        <div><dt>SKU</dt><dd>Stock-keeping unit — one distinct product.</dd></div>
+        <div><dt>Lot</dt><dd>A batch of a SKU, often with a shared expiry date.</dd></div>
+        <div><dt>Location / bin</dt><dd>A scannable physical spot inside a zone.</dd></div>
+        <div><dt>On-hand</dt><dd>Physical quantity present at a balance.</dd></div>
+        <div><dt>Reserved</dt><dd>On-hand quantity promised to orders.</dd></div>
+        <div><dt>Putaway</dt><dd>Moving received stock from receiving into storage.</dd></div>
+        <div><dt>Allocation</dt><dd>Reserving specific stock to fulfill an order.</dd></div>
+        <div><dt>FIFO</dt><dd>First-in-first-out: consume oldest stock first.</dd></div>
+        <div><dt>FEFO</dt><dd>First-expired-first-out: earliest expiry first.</dd></div>
+        <div><dt>Pick</dt><dd>Collecting reserved items for an order.</dd></div>
+        <div><dt>Wave</dt><dd>A batch of orders released to pick together (later phase).</dd></div>
+        <div><dt>Ledger</dt><dd>The immutable history of every stock movement.</dd></div>
+      </dl>
+
+    </div>
+  </section>
+
+  <!-- ============ 2. ARCHITECTURE ============ -->
+  <section class="block" id="arch">
+    <div class="sec-head"><span class="num">02</span><h2>Architecture &amp; data flow</h2></div>
+    <p class="sec-sub">A modular monolith, one PWA, three backing services. Same-origin requests keep the API off the public network in development.</p>
+    <div class="card">
+      <div class="layer"><span class="ltag">Clients</span>
+        <div class="row">
+          <div class="node"><b>Desktop console</b><small>operations UI</small></div>
+          <div class="node"><b>Scanner PWA</b><small>/scan · gloved use</small></div>
+        </div>
+      </div>
+      <div class="flowdown">▼</div>
+      <div class="layer"><span class="ltag">Web · Next.js (App Router)</span>
+        <div class="row">
+          <div class="node"><b>React pages</b><small>TanStack Query</small></div>
+          <div class="node"><b>/wms-data proxy</b><small>same-origin → :4000</small></div>
+          <div class="node"><b>Service worker</b><small>app-shell cache</small></div>
+        </div>
+      </div>
+      <div class="flowdown">▼</div>
+      <div class="layer"><span class="ltag">API · NestJS · /api/v1 · OpenAPI at /docs</span>
+        <div class="row">
+          <div class="node api"><b>warehouse</b><small>topology</small></div>
+          <div class="node api"><b>catalog</b><small>SKU · barcode</small></div>
+          <div class="node api"><b>inventory</b><small>balances · ledger</small></div>
+          <div class="node api"><b>inbound</b><small>purchase orders</small></div>
+          <div class="node api"><b>outbound</b><small>sales orders</small></div>
+          <div class="node api"><b>deliveries</b><small>shipments</small></div>
+          <div class="node api"><b>tasks</b><small>ops work</small></div>
+          <div class="node api"><b>health</b><small>live · ready</small></div>
+        </div>
+        <div class="row" style="margin-top:10px;">
+          <div class="node plat"><b>Prisma</b><small>data access</small></div>
+          <div class="node plat"><b>AuditLog</b><small>who changed what</small></div>
+          <div class="node plat"><b>OutboxEvent</b><small>events for later</small></div>
+          <div class="node plat"><b>IdempotencyKey</b><small>safe retries</small></div>
+        </div>
+      </div>
+      <div class="flowdown">▼</div>
+      <div class="layer"><span class="ltag">Data &amp; infrastructure (Docker Compose)</span>
+        <div class="row">
+          <div class="node data"><b>PostgreSQL</b><small>system of record</small></div>
+          <div class="node data"><b>Redis</b><small>jobs (planned)</small></div>
+          <div class="node data"><b>MinIO</b><small>S3 objects</small></div>
+        </div>
+      </div>
+      <div class="legend">
+        <span><i style="background:var(--steel);"></i>API module</span>
+        <span><i style="background:var(--violet);"></i>Platform / cross-cutting</span>
+        <span><i style="background:var(--good);"></i>Data store</span>
+      </div>
+    </div>
+
+    <p class="sec-sub" style="margin:18px 0 6px;"><b style="color:var(--ink);">The critical path</b> — how a scanned stock change becomes durable, explainable state:</p>
+    <div class="card">
+      <div class="flowsteps">
+        <div class="fstep"><span class="b"></span><span class="txt">Operator <b>scans</b> in the PWA; the request carries an <span class="mono">idempotencyKey</span>.</span></div>
+        <div class="fstep"><span class="b"></span><span class="txt">Next.js forwards it same-origin via <span class="mono">/wms-data</span> to the API.</span></div>
+        <div class="fstep"><span class="b"></span><span class="txt">A <b>controller</b> routes it; the <b>ValidationPipe</b> rejects any unknown or malformed field.</span></div>
+        <div class="fstep"><span class="b"></span><span class="txt">The <b>service</b> opens a single <span class="mono">prisma.$transaction</span>.</span></div>
+        <div class="fstep"><span class="b"></span><span class="txt">It updates the balance <b>only if <span class="mono">version</span> is unchanged</b> (optimistic lock) — else a conflict is returned.</span></div>
+        <div class="fstep"><span class="b"></span><span class="txt">In the <b>same</b> transaction it appends an immutable <b>InventoryTransaction</b> ledger row.</span></div>
+        <div class="fstep"><span class="b"></span><span class="txt">Still same transaction: an <b>AuditLog</b> row and an <b>OutboxEvent</b> are written, then it commits atomically.</span></div>
+        <div class="fstep"><span class="b"></span><span class="txt">The response returns the updated resource and its new <span class="mono">version</span>; retries with the same key are safe.</span></div>
+      </div>
+      <p class="note"><b>Invariant:</b> stock never changes without a ledger row in the same transaction. Redis, queues, and sockets are <b>never</b> the source of truth.</p>
+    </div>
+  </section>
+
+  <!-- ============ 3. ENUMS ============ -->
+  <section class="block" id="enums">
+    <div class="sec-head"><span class="num">03</span><h2>Enumerations</h2></div>
+    <p class="sec-sub">The nine enums that constrain state across the schema. Steel = intermediate · green = terminal-success · red = terminal-failure.</p>
+    <div class="card">
+      <div class="enums">
+        <div class="enum"><div class="eh">LocationType</div><div class="ev"><span>RECEIVING</span><span>STORAGE</span><span>PICKING</span><span>PACKING</span><span>SHIPPING</span><span>QUARANTINE</span></div></div>
+        <div class="enum"><div class="eh">LocationStatus</div><div class="ev"><span class="term">ACTIVE</span><span class="bad">BLOCKED</span><span>INACTIVE</span></div></div>
+        <div class="enum"><div class="eh">TrackingPolicy</div><div class="ev"><span>NONE</span><span>LOT</span><span>SERIAL</span></div></div>
+        <div class="enum"><div class="eh">InventoryStatus</div><div class="ev"><span class="term">AVAILABLE</span><span class="bad">DAMAGED</span><span class="bad">QUARANTINED</span><span class="bad">EXPIRED</span></div></div>
+        <div class="enum"><div class="eh">InventoryTransactionType</div><div class="ev"><span>RECEIPT</span><span>MOVE</span><span>RESERVATION</span><span>RELEASE</span><span>PICK</span><span>SHIPMENT</span><span>RETURN</span><span>ADJUSTMENT</span></div></div>
+        <div class="enum"><div class="eh">OrderStatus</div><div class="ev"><span>DRAFT</span><span>READY_TO_ALLOCATE</span><span>ALLOCATED</span><span>PICKING</span><span>PICKED</span><span>PACKED</span><span class="term">SHIPPED</span><span class="bad">CANCELLED</span></div></div>
+        <div class="enum"><div class="eh">PurchaseOrderStatus</div><div class="ev"><span>DRAFT</span><span>OPEN</span><span>PARTIALLY_RECEIVED</span><span>RECEIVED</span><span class="term">CLOSED</span><span class="bad">CANCELLED</span></div></div>
+        <div class="enum"><div class="eh">TaskStatus</div><div class="ev"><span>OPEN</span><span>ASSIGNED</span><span>IN_PROGRESS</span><span class="term">COMPLETED</span><span class="bad">CANCELLED</span><span class="bad">EXCEPTION</span></div></div>
+        <div class="enum"><div class="eh">DeliveryStatus</div><div class="ev"><span>CREATED</span><span>PICKED_UP</span><span>IN_TRANSIT</span><span>OUT_FOR_DELIVERY</span><span class="term">DELIVERED</span><span class="bad">FAILED</span><span class="bad">CANCELLED</span></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 4. FULL SCHEMA ============ -->
+  <section class="block" id="schema">
+    <div class="sec-head"><span class="num">04</span><h2>Database schema — data dictionary</h2></div>
+    <p class="sec-sub">All 16 models, every column, type, and constraint — exactly as defined in <span class="mono">packages/database/prisma/schema.prisma</span>. Keys: <span class="kk pk">PK</span> primary · <span class="kk fk">FK</span> foreign · <span class="kk uq">UQ</span> unique.</p>
+    <div class="card">
+
+      <!-- TOPOLOGY -->
+      <div class="domain-label"><span class="dot" style="background:var(--steel);"></span><h3>Topology</h3><span class="rule"></span></div>
+
+      <div class="tbl">
+        <div class="th"><b>Warehouse</b><span class="rel">→ zones · balances · purchaseOrders</span></div>
+        <div class="scrollx"><table class="dt">
+          <thead><tr><th>Column</th><th>Type</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td class="col">id<span class="kk pk">PK</span></td><td class="ty">uuid</td><td class="nt">default uuid()</td></tr>
+            <tr><td class="col">code<span class="kk uq">UQ</span></td><td class="ty">string</td><td class="nt">e.g. SEL-01</td></tr>
+            <tr><td class="col">name</td><td class="ty">string</td><td class="nt"></td></tr>
+            <tr><td class="col">timezone</td><td class="ty">string</td><td class="nt">default "Asia/Seoul"</td></tr>
+            <tr><td class="col">address</td><td class="ty">string?</td><td class="nt">nullable</td></tr>
+            <tr><td class="col">latitude</td><td class="ty">float?</td><td class="nt"></td></tr>
+            <tr><td class="col">longitude</td><td class="ty">float?</td><td class="nt"></td></tr>
+            <tr><td class="col">operationalSettings</td><td class="ty">json</td><td class="nt">default {}</td></tr>
+            <tr><td class="col">active</td><td class="ty">boolean</td><td class="nt">default true</td></tr>
+            <tr><td class="col">createdAt / updatedAt</td><td class="ty">datetime</td><td class="nt">timestamps</td></tr>
+          </tbody>
+        </table></div>
+      </div>
+
+      <div class="tbl">
+        <div class="th"><b>Zone</b><span class="rel">→ warehouse · locations</span></div>
+        <div class="scrollx"><table class="dt">
+          <thead><tr><th>Column</th><th>Type</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td class="col">id<span class="kk pk">PK</span></td><td class="ty">uuid</td><td class="nt"></td></tr>
+            <tr><td class="col">warehouseId<span class="kk fk">FK</span></td><td class="ty">uuid</td><td class="nt">→ Warehouse · Restrict</td></tr>
+            <tr><td class="col">code</td><td class="ty">string</td><td class="nt"></td></tr>
+            <tr><td class="col">name</td><td class="ty">string</td><td class="nt"></td></tr>
+            <tr><td class="col">sequence</td><td class="ty">int</td><td class="nt">default 0</td></tr>
+          </tbody>
+        </table></div>
+        <div class="cons"><b>unique</b> (warehouseId, code) &nbsp;·&nbsp; <b>index</b> (warehouseId, sequence)</div>
+      </div>
+
+      <div class="tbl">
+        <div class="th"><b>Location</b><span class="rel">→ zone · balances</span></div>
+        <div class="scrollx"><table class="dt">
+          <thead><tr><th>Column</th><th>Type</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td class="col">id<span class="kk pk">PK</span></td><td class="ty">uuid</td><td class="nt"></td></tr>
+            <tr><td class="col">zoneId<span class="kk fk">FK</span></td><td class="ty">uuid</td><td class="nt">→ Zone · Restrict</td></tr>
+            <tr><td class="col">code</td><td class="ty">string</td><td class="nt"></td></tr>
+            <tr><td class="col">barcode<span class="kk uq">UQ</span></td><td class="ty">string</td><td class="nt">globally unique</td></tr>
+            <tr><td class="col">type</td><td class="ty">LocationType</td><td class="nt">enum</td></tr>
+            <tr><td class="col">status</td><td class="ty">LocationStatus</td><td class="nt">default ACTIVE</td></tr>
+            <tr><td class="col">sequence</td><td class="ty">int</td><td class="nt">default 0</td></tr>
+            <tr><td class="col">maxWeightKg</td><td class="ty">decimal(12,3)?</td><td class="nt">capacity</td></tr>
+          </tbody>
+        </table></div>
+        <div class="cons"><b>unique</b> (zoneId, code) &nbsp;·&nbsp; <b>index</b> (zoneId, sequence)</div>
+      </div>
+
+      <!-- CATALOG -->
+      <div class="domain-label"><span class="dot" style="background:var(--amber);"></span><h3>Catalog</h3><span class="rule"></span></div>
+
+      <div class="tbl">
+        <div class="th"><b>Sku</b><span class="rel">→ barcodes · balances · transactions · order/PO lines</span></div>
+        <div class="scrollx"><table class="dt">
+          <thead><tr><th>Column</th><th>Type</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td class="col">id<span class="kk pk">PK</span></td><td class="ty">uuid</td><td class="nt"></td></tr>
+            <tr><td class="col">code<span class="kk uq">UQ</span></td><td class="ty">string</td><td class="nt">e.g. DEMO-001</td></tr>
+            <tr><td class="col">name</td><td class="ty">string</td><td class="nt"></td></tr>
+            <tr><td class="col">description</td><td class="ty">string?</td><td class="nt"></td></tr>
+            <tr><td class="col">trackingPolicy</td><td class="ty">TrackingPolicy</td><td class="nt">default NONE</td></tr>
+            <tr><td class="col">expiryTracked</td><td class="ty">boolean</td><td class="nt">default false — drives FEFO</td></tr>
+            <tr><td class="col">weightKg</td><td class="ty">decimal(12,3)?</td><td class="nt"></td></tr>
+            <tr><td class="col">lengthCm / widthCm / heightCm</td><td class="ty">decimal(12,2)?</td><td class="nt">dimensions</td></tr>
+            <tr><td class="col">active</td><td class="ty">boolean</td><td class="nt">default true</td></tr>
+            <tr><td class="col">createdAt / updatedAt</td><td class="ty">datetime</td><td class="nt"></td></tr>
+          </tbody>
+        </table></div>
+      </div>
+
+      <div class="tbl">
+        <div class="th"><b>Barcode</b><span class="rel">→ sku</span></div>
+        <div class="scrollx"><table class="dt">
+          <thead><tr><th>Column</th><th>Type</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td class="col">id<span class="kk pk">PK</span></td><td class="ty">uuid</td><td class="nt"></td></tr>
+            <tr><td class="col">skuId<span class="kk fk">FK</span></td><td class="ty">uuid</td><td class="nt">→ Sku · Restrict</td></tr>
+            <tr><td class="col">value<span class="kk uq">UQ</span></td><td class="ty">string</td><td class="nt">globally unique</td></tr>
+            <tr><td class="col">symbology</td><td class="ty">string</td><td class="nt">default "CODE128"</td></tr>
+            <tr><td class="col">primary</td><td class="ty">boolean</td><td class="nt">default false</td></tr>
+            <tr><td class="col">createdAt</td><td class="ty">datetime</td><td class="nt"></td></tr>
+          </tbody>
+        </table></div>
+        <div class="cons"><b>index</b> (skuId)</div>
+      </div>
+
+      <!-- INVENTORY -->
+      <div class="domain-label"><span class="dot" style="background:var(--good);"></span><h3>Inventory — the kernel</h3><span class="rule"></span></div>
+
+      <div class="tbl">
+        <div class="th"><b>InventoryBalance</b><span class="rel">→ warehouse · location · sku</span></div>
+        <div class="scrollx"><table class="dt">
+          <thead><tr><th>Column</th><th>Type</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td class="col">id<span class="kk pk">PK</span></td><td class="ty">uuid</td><td class="nt"></td></tr>
+            <tr><td class="col">warehouseId<span class="kk fk">FK</span></td><td class="ty">uuid</td><td class="nt">→ Warehouse</td></tr>
+            <tr><td class="col">locationId<span class="kk fk">FK</span></td><td class="ty">uuid</td><td class="nt">→ Location</td></tr>
+            <tr><td class="col">skuId<span class="kk fk">FK</span></td><td class="ty">uuid</td><td class="nt">→ Sku</td></tr>
+            <tr><td class="col">lotNumber</td><td class="ty">string</td><td class="nt">default "" (empty = no lot)</td></tr>
+            <tr><td class="col">expiresAt</td><td class="ty">datetime?</td><td class="nt">for FEFO</td></tr>
+            <tr><td class="col">status</td><td class="ty">InventoryStatus</td><td class="nt">default AVAILABLE</td></tr>
+            <tr><td class="col">onHandQty</td><td class="ty">decimal(18,3)</td><td class="nt">default 0</td></tr>
+            <tr><td class="col">reservedQty</td><td class="ty">decimal(18,3)</td><td class="nt">default 0</td></tr>
+            <tr><td class="col">version</td><td class="ty">int</td><td class="nt">default 1 — optimistic lock</td></tr>
+            <tr><td class="col">createdAt / updatedAt</td><td class="ty">datetime</td><td class="nt"></td></tr>
+          </tbody>
+        </table></div>
+        <div class="cons"><b>unique</b> (locationId, skuId, lotNumber, status) &nbsp;·&nbsp; <b>index</b> (warehouseId, skuId) · (skuId, expiresAt) &nbsp;·&nbsp; availableQty = onHand − reserved (derived)</div>
+      </div>
+
+      <div class="tbl">
+        <div class="th"><b>InventoryTransaction</b><span class="rel">append-only ledger · → sku</span></div>
+        <div class="scrollx"><table class="dt">
+          <thead><tr><th>Column</th><th>Type</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td class="col">id<span class="kk pk">PK</span></td><td class="ty">uuid</td><td class="nt"></td></tr>
+            <tr><td class="col">type</td><td class="ty">…TransactionType</td><td class="nt">enum (8 kinds)</td></tr>
+            <tr><td class="col">skuId<span class="kk fk">FK</span></td><td class="ty">uuid</td><td class="nt">→ Sku</td></tr>
+            <tr><td class="col">fromLocationId</td><td class="ty">uuid?</td><td class="nt">source (moves/picks)</td></tr>
+            <tr><td class="col">toLocationId</td><td class="ty">uuid?</td><td class="nt">destination</td></tr>
+            <tr><td class="col">lotNumber</td><td class="ty">string</td><td class="nt">default ""</td></tr>
+            <tr><td class="col">quantity</td><td class="ty">decimal(18,3)</td><td class="nt"></td></tr>
+            <tr><td class="col">referenceType</td><td class="ty">string</td><td class="nt">source aggregate kind</td></tr>
+            <tr><td class="col">referenceId</td><td class="ty">string</td><td class="nt">source aggregate id</td></tr>
+            <tr><td class="col">idempotencyKey<span class="kk uq">UQ</span></td><td class="ty">string</td><td class="nt">replay protection</td></tr>
+            <tr><td class="col">actorId</td><td class="ty">string?</td><td class="nt">who</td></tr>
+            <tr><td class="col">reason</td><td class="ty">string?</td><td class="nt"></td></tr>
+            <tr><td class="col">occurredAt</td><td class="ty">datetime</td><td class="nt">default now()</td></tr>
+          </tbody>
+        </table></div>
+        <div class="cons"><b>index</b> (skuId, occurredAt) · (referenceType, referenceId)</div>
+      </div>
+
+      <!-- INBOUND -->
+      <div class="domain-label"><span class="dot" style="background:var(--violet);"></span><h3>Inbound</h3><span class="rule"></span></div>
+
+      <div class="tbl">
+        <div class="th"><b>PurchaseOrder</b><span class="rel">→ warehouse · lines</span></div>
+        <div class="scrollx"><table class="dt">
+          <thead><tr><th>Column</th><th>Type</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td class="col">id<span class="kk pk">PK</span></td><td class="ty">uuid</td><td class="nt"></td></tr>
+            <tr><td class="col">orderNumber<span class="kk uq">UQ</span></td><td class="ty">string</td><td class="nt"></td></tr>
+            <tr><td class="col">warehouseId<span class="kk fk">FK</span></td><td class="ty">uuid</td><td class="nt">→ Warehouse</td></tr>
+            <tr><td class="col">supplierName</td><td class="ty">string</td><td class="nt"></td></tr>
+            <tr><td class="col">supplierReference</td><td class="ty">string?</td><td class="nt"></td></tr>
+            <tr><td class="col">expectedAt</td><td class="ty">datetime</td><td class="nt"></td></tr>
+            <tr><td class="col">receivingDock</td><td class="ty">string?</td><td class="nt"></td></tr>
+            <tr><td class="col">priority</td><td class="ty">int</td><td class="nt">default 0</td></tr>
+            <tr><td class="col">status</td><td class="ty">PurchaseOrderStatus</td><td class="nt">default DRAFT</td></tr>
+            <tr><td class="col">notes</td><td class="ty">string?</td><td class="nt"></td></tr>
+            <tr><td class="col">version</td><td class="ty">int</td><td class="nt">default 1</td></tr>
+            <tr><td class="col">createdAt / updatedAt</td><td class="ty">datetime</td><td class="nt"></td></tr>
+          </tbody>
+        </table></div>
+        <div class="cons"><b>index</b> (warehouseId, status, expectedAt) · (supplierName)</div>
+      </div>
+
+      <div class="tbl">
+        <div class="th"><b>PurchaseOrderLine</b><span class="rel">→ purchaseOrder · sku</span></div>
+        <div class="scrollx"><table class="dt">
+          <thead><tr><th>Column</th><th>Type</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td class="col">id<span class="kk pk">PK</span></td><td class="ty">uuid</td><td class="nt"></td></tr>
+            <tr><td class="col">purchaseOrderId<span class="kk fk">FK</span></td><td class="ty">uuid</td><td class="nt">→ PurchaseOrder</td></tr>
+            <tr><td class="col">skuId<span class="kk fk">FK</span></td><td class="ty">uuid</td><td class="nt">→ Sku</td></tr>
+            <tr><td class="col">expectedQty</td><td class="ty">decimal(18,3)</td><td class="nt"></td></tr>
+            <tr><td class="col">receivedQty</td><td class="ty">decimal(18,3)</td><td class="nt">default 0</td></tr>
+            <tr><td class="col">unit</td><td class="ty">string</td><td class="nt">default "EA"</td></tr>
+            <tr><td class="col">notes</td><td class="ty">string?</td><td class="nt"></td></tr>
+          </tbody>
+        </table></div>
+        <div class="cons"><b>unique</b> (purchaseOrderId, skuId) &nbsp;·&nbsp; <b>index</b> (skuId)</div>
+      </div>
+
+      <!-- OUTBOUND & DELIVERY -->
+      <div class="domain-label"><span class="dot" style="background:var(--crit);"></span><h3>Outbound &amp; delivery</h3><span class="rule"></span></div>
+
+      <div class="tbl">
+        <div class="th"><b>SalesOrder</b><span class="rel">→ lines · shipments</span></div>
+        <div class="scrollx"><table class="dt">
+          <thead><tr><th>Column</th><th>Type</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td class="col">id<span class="kk pk">PK</span></td><td class="ty">uuid</td><td class="nt"></td></tr>
+            <tr><td class="col">orderNumber<span class="kk uq">UQ</span></td><td class="ty">string</td><td class="nt"></td></tr>
+            <tr><td class="col">status</td><td class="ty">OrderStatus</td><td class="nt">default DRAFT</td></tr>
+            <tr><td class="col">priority</td><td class="ty">int</td><td class="nt">default 0</td></tr>
+            <tr><td class="col">recipient</td><td class="ty">string</td><td class="nt"></td></tr>
+            <tr><td class="col">address</td><td class="ty">json</td><td class="nt">shipping address</td></tr>
+            <tr><td class="col">version</td><td class="ty">int</td><td class="nt">default 1</td></tr>
+            <tr><td class="col">createdAt / updatedAt</td><td class="ty">datetime</td><td class="nt"></td></tr>
+          </tbody>
+        </table></div>
+      </div>
+
+      <div class="tbl">
+        <div class="th"><b>SalesOrderLine</b><span class="rel">→ order · sku</span></div>
+        <div class="scrollx"><table class="dt">
+          <thead><tr><th>Column</th><th>Type</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td class="col">id<span class="kk pk">PK</span></td><td class="ty">uuid</td><td class="nt"></td></tr>
+            <tr><td class="col">orderId<span class="kk fk">FK</span></td><td class="ty">uuid</td><td class="nt">→ SalesOrder</td></tr>
+            <tr><td class="col">skuId<span class="kk fk">FK</span></td><td class="ty">uuid</td><td class="nt">→ Sku</td></tr>
+            <tr><td class="col">orderedQty</td><td class="ty">decimal(18,3)</td><td class="nt"></td></tr>
+            <tr><td class="col">allocatedQty</td><td class="ty">decimal(18,3)</td><td class="nt">default 0</td></tr>
+            <tr><td class="col">pickedQty</td><td class="ty">decimal(18,3)</td><td class="nt">default 0</td></tr>
+          </tbody>
+        </table></div>
+        <div class="cons"><b>unique</b> (orderId, skuId) &nbsp;·&nbsp; <b>index</b> (skuId)</div>
+      </div>
+
+      <div class="tbl">
+        <div class="th"><b>DeliveryShipment</b><span class="rel">→ order · events</span></div>
+        <div class="scrollx"><table class="dt">
+          <thead><tr><th>Column</th><th>Type</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td class="col">id<span class="kk pk">PK</span></td><td class="ty">uuid</td><td class="nt"></td></tr>
+            <tr><td class="col">orderId<span class="kk fk">FK</span></td><td class="ty">uuid</td><td class="nt">→ SalesOrder</td></tr>
+            <tr><td class="col">provider</td><td class="ty">string</td><td class="nt">default "SANDBOX"</td></tr>
+            <tr><td class="col">service</td><td class="ty">string</td><td class="nt">default "STANDARD"</td></tr>
+            <tr><td class="col">trackingNumber<span class="kk uq">UQ</span></td><td class="ty">string</td><td class="nt"></td></tr>
+            <tr><td class="col">status</td><td class="ty">DeliveryStatus</td><td class="nt">default CREATED</td></tr>
+            <tr><td class="col">estimatedDeliveryAt</td><td class="ty">datetime?</td><td class="nt"></td></tr>
+            <tr><td class="col">createdAt / updatedAt</td><td class="ty">datetime</td><td class="nt"></td></tr>
+          </tbody>
+        </table></div>
+        <div class="cons"><b>index</b> (orderId) · (status, createdAt)</div>
+      </div>
+
+      <div class="tbl">
+        <div class="th"><b>DeliveryEvent</b><span class="rel">→ shipment (cascade)</span></div>
+        <div class="scrollx"><table class="dt">
+          <thead><tr><th>Column</th><th>Type</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td class="col">id<span class="kk pk">PK</span></td><td class="ty">uuid</td><td class="nt"></td></tr>
+            <tr><td class="col">shipmentId<span class="kk fk">FK</span></td><td class="ty">uuid</td><td class="nt">→ Shipment · Cascade</td></tr>
+            <tr><td class="col">status</td><td class="ty">DeliveryStatus</td><td class="nt"></td></tr>
+            <tr><td class="col">description</td><td class="ty">string</td><td class="nt"></td></tr>
+            <tr><td class="col">location</td><td class="ty">string?</td><td class="nt"></td></tr>
+            <tr><td class="col">occurredAt</td><td class="ty">datetime</td><td class="nt">default now()</td></tr>
+          </tbody>
+        </table></div>
+        <div class="cons"><b>index</b> (shipmentId, occurredAt)</div>
+      </div>
+
+      <!-- CROSS-CUTTING -->
+      <div class="domain-label"><span class="dot" style="background:var(--muted);"></span><h3>Cross-cutting &amp; platform</h3><span class="rule"></span></div>
+
+      <div class="tbl">
+        <div class="th"><b>OperationalTask</b><span class="rel">generic work item</span></div>
+        <div class="scrollx"><table class="dt">
+          <thead><tr><th>Column</th><th>Type</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td class="col">id<span class="kk pk">PK</span></td><td class="ty">uuid</td><td class="nt"></td></tr>
+            <tr><td class="col">type</td><td class="ty">string</td><td class="nt">PUTAWAY, PICK, …</td></tr>
+            <tr><td class="col">status</td><td class="ty">TaskStatus</td><td class="nt">default OPEN</td></tr>
+            <tr><td class="col">priority</td><td class="ty">int</td><td class="nt">default 0</td></tr>
+            <tr><td class="col">warehouseId</td><td class="ty">uuid</td><td class="nt"></td></tr>
+            <tr><td class="col">assigneeId</td><td class="ty">string?</td><td class="nt"></td></tr>
+            <tr><td class="col">referenceType / referenceId</td><td class="ty">string</td><td class="nt">what it acts on</td></tr>
+            <tr><td class="col">payload</td><td class="ty">json</td><td class="nt"></td></tr>
+            <tr><td class="col">version</td><td class="ty">int</td><td class="nt">default 1</td></tr>
+            <tr><td class="col">createdAt / updatedAt</td><td class="ty">datetime</td><td class="nt"></td></tr>
+          </tbody>
+        </table></div>
+        <div class="cons"><b>index</b> (warehouseId, status, priority) · (assigneeId, status)</div>
+      </div>
+
+      <div class="tbl">
+        <div class="th"><b>AuditLog</b><span class="rel">immutable history</span></div>
+        <div class="scrollx"><table class="dt">
+          <thead><tr><th>Column</th><th>Type</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td class="col">id<span class="kk pk">PK</span></td><td class="ty">uuid</td><td class="nt"></td></tr>
+            <tr><td class="col">actorId</td><td class="ty">string?</td><td class="nt"></td></tr>
+            <tr><td class="col">action</td><td class="ty">string</td><td class="nt">e.g. INVENTORY_ADJUSTED</td></tr>
+            <tr><td class="col">resourceType / resourceId</td><td class="ty">string</td><td class="nt"></td></tr>
+            <tr><td class="col">before / after</td><td class="ty">json?</td><td class="nt">state snapshots</td></tr>
+            <tr><td class="col">requestId</td><td class="ty">string?</td><td class="nt">trace</td></tr>
+            <tr><td class="col">createdAt</td><td class="ty">datetime</td><td class="nt"></td></tr>
+          </tbody>
+        </table></div>
+        <div class="cons"><b>index</b> (resourceType, resourceId, createdAt)</div>
+      </div>
+
+      <div class="tbl">
+        <div class="th"><b>IdempotencyKey</b><span class="rel">replay protection</span></div>
+        <div class="scrollx"><table class="dt">
+          <thead><tr><th>Column</th><th>Type</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td class="col">key<span class="kk pk">PK</span></td><td class="ty">string</td><td class="nt">the id itself</td></tr>
+            <tr><td class="col">scope</td><td class="ty">string</td><td class="nt">command namespace</td></tr>
+            <tr><td class="col">requestHash</td><td class="ty">string</td><td class="nt">detects payload drift</td></tr>
+            <tr><td class="col">statusCode</td><td class="ty">int</td><td class="nt">stored response code</td></tr>
+            <tr><td class="col">response</td><td class="ty">json</td><td class="nt">replayed result</td></tr>
+            <tr><td class="col">createdAt / expiresAt</td><td class="ty">datetime</td><td class="nt"></td></tr>
+          </tbody>
+        </table></div>
+        <div class="cons"><b>index</b> (expiresAt)</div>
+      </div>
+
+      <div class="tbl">
+        <div class="th"><b>OutboxEvent</b><span class="rel">transactional events</span></div>
+        <div class="scrollx"><table class="dt">
+          <thead><tr><th>Column</th><th>Type</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td class="col">id<span class="kk pk">PK</span></td><td class="ty">uuid</td><td class="nt"></td></tr>
+            <tr><td class="col">topic</td><td class="ty">string</td><td class="nt">e.g. inventory.adjusted</td></tr>
+            <tr><td class="col">aggregateId</td><td class="ty">string</td><td class="nt"></td></tr>
+            <tr><td class="col">payload</td><td class="ty">json</td><td class="nt"></td></tr>
+            <tr><td class="col">createdAt</td><td class="ty">datetime</td><td class="nt"></td></tr>
+            <tr><td class="col">publishedAt</td><td class="ty">datetime?</td><td class="nt">null = unsent</td></tr>
+            <tr><td class="col">attempts</td><td class="ty">int</td><td class="nt">default 0</td></tr>
+          </tbody>
+        </table></div>
+        <div class="cons"><b>index</b> (publishedAt, createdAt)</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============ 5. STATE MACHINES ============ -->
+  <section class="block" id="sm">
+    <div class="sec-head"><span class="num">05</span><h2>Workflow state machines</h2></div>
+    <p class="sec-sub">Every transition is a named command, not a generic update. Terminal states in green; cancellations in red.</p>
+    <div class="card">
+
+      <div class="sm">
+        <div class="sm-title"><b>Purchase order</b><span class="path">enum PurchaseOrderStatus · inbound</span></div>
+        <div class="scrollpad"><div class="flow">
+          <div class="state start">DRAFT</div>
+          <div class="edge"><span class="lab">approve</span><span class="ar">→</span></div>
+          <div class="state">OPEN</div>
+          <div class="edge"><span class="lab">receive</span><span class="ar">→</span></div>
+          <div class="state">PARTIALLY_RECEIVED</div>
+          <div class="edge"><span class="lab">receive full</span><span class="ar">→</span></div>
+          <div class="state">RECEIVED</div>
+          <div class="edge"><span class="lab">close</span><span class="ar">→</span></div>
+          <div class="state win">CLOSED</div>
+        </div></div>
+        <p class="branch"><span class="self">↺</span> PARTIALLY_RECEIVED loops on each partial receipt &nbsp;·&nbsp; <span class="x">✕ CANCELLED</span> from DRAFT / OPEN before stock is posted.</p>
+      </div>
+
+      <div class="sm">
+        <div class="sm-title"><b>Sales order</b><span class="path">enum OrderStatus · outbound</span></div>
+        <div class="scrollpad"><div class="flow">
+          <div class="state start">DRAFT</div>
+          <div class="edge"><span class="lab">submit</span><span class="ar">→</span></div>
+          <div class="state">READY_TO_ALLOCATE</div>
+          <div class="edge"><span class="lab">allocate<br>FIFO/FEFO</span><span class="ar">→</span></div>
+          <div class="state">ALLOCATED</div>
+          <div class="edge"><span class="lab">start pick</span><span class="ar">→</span></div>
+          <div class="state">PICKING</div>
+          <div class="edge"><span class="lab">confirm</span><span class="ar">→</span></div>
+          <div class="state">PICKED</div>
+          <div class="edge"><span class="lab">pack</span><span class="ar">→</span></div>
+          <div class="state">PACKED</div>
+          <div class="edge"><span class="lab">ship</span><span class="ar">→</span></div>
+          <div class="state win">SHIPPED</div>
+        </div></div>
+        <p class="branch">allocate raises <span class="mono" style="font-size:11px;">reservedQty</span>; pick consumes it &nbsp;·&nbsp; <span class="x">✕ CANCELLED</span> before SHIPPED (releases reservations).</p>
+      </div>
+
+      <div class="sm">
+        <div class="sm-title"><b>Delivery shipment</b><span class="path">enum DeliveryStatus · deliveries</span></div>
+        <div class="scrollpad"><div class="flow">
+          <div class="state start">CREATED</div>
+          <div class="edge"><span class="lab">pickup</span><span class="ar">→</span></div>
+          <div class="state">PICKED_UP</div>
+          <div class="edge"><span class="lab">depart</span><span class="ar">→</span></div>
+          <div class="state">IN_TRANSIT</div>
+          <div class="edge"><span class="lab">last mile</span><span class="ar">→</span></div>
+          <div class="state">OUT_FOR_DELIVERY</div>
+          <div class="edge"><span class="lab">deliver</span><span class="ar">→</span></div>
+          <div class="state win">DELIVERED</div>
+        </div></div>
+        <p class="branch">each transition writes a <b>DeliveryEvent</b> &nbsp;·&nbsp; <span class="x">✕ FAILED / CANCELLED</span> are terminal.</p>
+      </div>
+
+      <div class="sm" style="margin-top:6px;">
+        <div class="sm-title"><b>Inventory ledger</b><span class="path">enum InventoryTransactionType · every stock change</span></div>
+        <div class="ledger">
+          <div class="lx"><b>RECEIPT</b><p>stock arrives from a PO</p></div>
+          <div class="lx"><b>MOVE</b><p>between locations (putaway)</p></div>
+          <div class="lx"><b>RESERVATION</b><p>allocation holds stock</p></div>
+          <div class="lx"><b>RELEASE</b><p>reservation returned</p></div>
+          <div class="lx"><b>PICK</b><p>reserved stock picked</p></div>
+          <div class="lx"><b>SHIPMENT</b><p>stock leaves the building</p></div>
+          <div class="lx"><b>RETURN</b><p>stock comes back</p></div>
+          <div class="lx"><b>ADJUSTMENT</b><p>supervised correction</p></div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============ 6. ROADMAP ============ -->
+  <section class="block" id="road">
+    <div class="sec-head"><span class="num">06</span><h2>The 10-day roadmap</h2></div>
+    <p class="sec-sub">Each day builds toward the inventory kernel (days 5–6, highlighted) and then outward to the full lifecycle.</p>
+    <div class="card">
+      <div class="rm-scroll"><div class="rm">
+        <div class="rmcol"><span class="rmday">D01</span><span class="rmt">Domain &amp; foundation</span><span class="rmp">Setup</span></div>
+        <div class="rmcol"><span class="rmday">D02</span><span class="rmt">Prisma &amp; schema</span><span class="rmp">Data</span></div>
+        <div class="rmcol"><span class="rmday">D03</span><span class="rmt">NestJS module</span><span class="rmp">API</span></div>
+        <div class="rmcol"><span class="rmday">D04</span><span class="rmt">Topology + catalog</span><span class="rmp">Master data</span></div>
+        <div class="rmcol crux"><span class="rmday">D05</span><span class="rmt">Inventory kernel</span><span class="rmp">Kernel ★</span></div>
+        <div class="rmcol crux"><span class="rmday">D06</span><span class="rmt">Concurrency &amp; idempotency</span><span class="rmp">Kernel ★</span></div>
+        <div class="rmcol"><span class="rmday">D07</span><span class="rmt">Receiving → ledger</span><span class="rmp">Inbound</span></div>
+        <div class="rmcol"><span class="rmday">D08</span><span class="rmt">Allocation &amp; picking</span><span class="rmp">Outbound</span></div>
+        <div class="rmcol"><span class="rmday">D09</span><span class="rmt">Scanner PWA</span><span class="rmp">Scanner</span></div>
+        <div class="rmcol"><span class="rmday">D10</span><span class="rmt">Pack, ship &amp; capstone</span><span class="rmp">Ship</span></div>
+      </div></div>
+      <p class="sec-sub" style="margin:16px 0 4px;"><b style="color:var(--ink);">Where it all leads</b> — the lifecycle a student runs end-to-end by day 10:</p>
+      <div class="lifebar">
+        <span class="life">Receive</span><span class="life-ar">→</span>
+        <span class="life">Putaway</span><span class="life-ar">→</span>
+        <span class="life">Allocate</span><span class="life-ar">→</span>
+        <span class="life">Pick</span><span class="life-ar">→</span>
+        <span class="life">Pack</span><span class="life-ar">→</span>
+        <span class="life">Ship</span>
+      </div>
+    </div>
+  </section>
+
+  <footer class="foot">
+    <span>JABLY-WMS · ARCHITECTURE &amp; REFERENCE v2</span>
+    <span><a class="top" href="#ctx">↑ back to top</a></span>
+  </footer>
+
+</div></div>

@@ -1,0 +1,550 @@
+<title>Fulfill WMS — Lab Workbook (10 Days)</title>
+
+<style>
+  :root {
+    --paper: #f7f5f1; --paper-2: #efece5; --card: #ffffff; --ink: #1b1e22; --ink-2: #3a3f45;
+    --muted: #6c655d; --line: #e0dbd2; --line-2: #d3ccc0; --amber: #e8630a; --amber-soft: #fbe9dc;
+    --steel: #2f6e8e; --steel-soft: #e2edf2; --good: #2f7d4f; --good-soft: #e4f0e8; --crit: #b23a2e;
+    --term-bg: #1c2024; --term-ink: #e7e2d8; --term-dim: #8b8578; --term-amber: #f2a24b; --term-green: #7bc48a;
+    --shadow: 0 1px 2px rgba(27,30,34,.05), 0 8px 24px rgba(27,30,34,.06);
+    --mono: ui-monospace, "SF Mono", "SFMono-Regular", "Menlo", "Consolas", monospace;
+    --sans: system-ui, -apple-system, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #16181b; --paper-2: #1b1e22; --card: #21252a; --ink: #f0ede7; --ink-2: #c4c0b8;
+      --muted: #928b81; --line: #2e333a; --line-2: #3a4048; --amber: #ff7d2e; --amber-soft: #3a2513;
+      --steel: #6fb4d6; --steel-soft: #16303c; --good: #5fb380; --good-soft: #16301f; --crit: #e0796d;
+      --term-bg: #101215; --term-ink: #e7e2d8; --term-dim: #7f7a6f; --term-amber: #f2a24b; --term-green: #7bc48a;
+      --shadow: 0 1px 2px rgba(0,0,0,.3), 0 10px 30px rgba(0,0,0,.35);
+    }
+  }
+  :root[data-theme="light"] {
+    --paper: #f7f5f1; --paper-2: #efece5; --card: #ffffff; --ink: #1b1e22; --ink-2: #3a3f45;
+    --muted: #6c655d; --line: #e0dbd2; --line-2: #d3ccc0; --amber: #e8630a; --amber-soft: #fbe9dc;
+    --steel: #2f6e8e; --steel-soft: #e2edf2; --good: #2f7d4f; --good-soft: #e4f0e8; --crit: #b23a2e;
+    --term-bg: #1c2024; --term-ink: #e7e2d8; --term-dim: #8b8578; --term-amber: #f2a24b; --term-green: #7bc48a;
+    --shadow: 0 1px 2px rgba(27,30,34,.05), 0 8px 24px rgba(27,30,34,.06);
+  }
+  :root[data-theme="dark"] {
+    --paper: #16181b; --paper-2: #1b1e22; --card: #21252a; --ink: #f0ede7; --ink-2: #c4c0b8;
+    --muted: #928b81; --line: #2e333a; --line-2: #3a4048; --amber: #ff7d2e; --amber-soft: #3a2513;
+    --steel: #6fb4d6; --steel-soft: #16303c; --good: #5fb380; --good-soft: #16301f; --crit: #e0796d;
+    --term-bg: #101215; --term-ink: #e7e2d8; --term-dim: #7f7a6f; --term-amber: #f2a24b; --term-green: #7bc48a;
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 10px 30px rgba(0,0,0,.35);
+  }
+
+  * { box-sizing: border-box; }
+  body { margin: 0; }
+  .page {
+    font-family: var(--sans); background: var(--paper); color: var(--ink); line-height: 1.6;
+    -webkit-font-smoothing: antialiased; padding: clamp(20px,4vw,48px) clamp(16px,4vw,40px) 80px;
+  }
+  .wrap { max-width: 880px; margin: 0 auto; }
+  .eyebrow { font-family: var(--mono); font-size: 12px; letter-spacing: .18em; text-transform: uppercase; color: var(--amber); font-weight: 600; }
+
+  /* Header */
+  header.hero { border: 1px solid var(--line); border-radius: 14px; background: var(--card); box-shadow: var(--shadow); overflow: hidden; }
+  .hero-top { padding: clamp(24px,4vw,38px) clamp(24px,4vw,40px) clamp(24px,4vw,34px); position: relative; padding-left: clamp(32px,5vw,52px); }
+  .hero-top::before { content:""; position:absolute; inset:0 auto 0 0; width:6px; background: repeating-linear-gradient(45deg, var(--amber) 0 10px, var(--ink) 10px 20px); }
+  h1 { font-size: clamp(28px,4.6vw,44px); line-height:1.03; letter-spacing:-.02em; margin:12px 0 8px; text-wrap:balance; font-weight:800; }
+  h1 .sub { color: var(--muted); font-weight:500; }
+  .lede { font-size: clamp(14.5px,1.5vw,16.5px); color: var(--ink-2); max-width:62ch; margin:0; }
+
+  /* How to use bar */
+  .howto { border-top:1px solid var(--line); background: var(--paper-2); padding: 16px clamp(24px,4vw,40px); display:flex; gap:22px; flex-wrap:wrap; }
+  .howto .item { display:flex; gap:9px; align-items:flex-start; font-size:13px; color: var(--ink-2); max-width: 250px; }
+  .howto .k { font-family:var(--mono); font-size:15px; line-height:1.2; }
+
+  /* Index */
+  .index { margin: 26px 0 10px; border:1px solid var(--line); border-radius:12px; background:var(--card); box-shadow:var(--shadow); overflow:hidden; }
+  .index a { display:grid; grid-template-columns: 58px 1fr auto; gap:14px; align-items:center; padding:11px 18px; text-decoration:none; color:var(--ink); border-bottom:1px solid var(--line); }
+  .index a:last-child { border-bottom:none; }
+  .index a:hover { background: var(--paper-2); }
+  .index .n { font-family:var(--mono); font-size:13px; color:var(--amber); font-weight:700; }
+  .index .t { font-size:14.5px; font-weight:600; }
+  .index .p { font-family:var(--mono); font-size:10px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); }
+
+  /* Worksheet */
+  .ws { margin-top: 22px; border:1px solid var(--line); border-radius:14px; background:var(--card); box-shadow:var(--shadow); overflow:hidden; scroll-margin-top: 16px; }
+  .ws.crux { border-color: var(--amber); }
+  .ws-head { padding: 20px clamp(20px,3.5vw,30px); border-bottom:1px solid var(--line); display:flex; gap:16px; align-items:flex-start; }
+  .ws.crux .ws-head { background: var(--amber-soft); }
+  .badge { flex:none; width:56px; text-align:center; }
+  .badge .lbl { font-family:var(--mono); font-size:10px; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); }
+  .badge .num { font-family:var(--mono); font-size:30px; font-weight:700; letter-spacing:-.02em; line-height:1; margin-top:2px; }
+  .ws-head .h { flex:1; }
+  .ws-head h2 { margin:0 0 4px; font-size:20px; letter-spacing:-.01em; font-weight:750; }
+  .ws-head .goal { margin:0; font-size:14px; color:var(--ink-2); }
+  .ws-head .goal b { color:var(--ink); }
+  .chips { display:flex; gap:6px; flex-wrap:wrap; margin-top:9px; }
+  .chip { font-family:var(--mono); font-size:10px; letter-spacing:.08em; text-transform:uppercase; padding:3px 8px; border-radius:5px; font-weight:600; border:1px solid transparent; }
+  .chip.phase { background:var(--steel-soft); color:var(--steel); border-color: color-mix(in srgb,var(--steel) 25%, transparent); }
+  .chip.time { background:var(--paper-2); color:var(--muted); border-color:var(--line-2); }
+  .chip.build { background:var(--amber-soft); color:var(--amber); border-color: color-mix(in srgb,var(--amber) 30%, transparent); }
+
+  .ws-body { padding: 4px clamp(20px,3.5vw,30px) 24px; }
+  .step-label { display:flex; align-items:center; gap:10px; margin:22px 0 10px; }
+  .step-label .tag { font-family:var(--mono); font-size:10.5px; letter-spacing:.14em; text-transform:uppercase; color:var(--amber); font-weight:700; }
+  .step-label .rule { flex:1; height:1px; background:var(--line); }
+
+  ol.steps { margin:0; padding-left:20px; }
+  ol.steps > li { margin:8px 0; font-size:14.5px; color:var(--ink-2); }
+  ol.steps > li::marker { color:var(--muted); font-family:var(--mono); font-size:12px; }
+  ol.steps b { color:var(--ink); }
+  p.note { font-size:14px; color:var(--ink-2); margin:6px 0; }
+
+  /* file path pills */
+  .path { font-family:var(--mono); font-size:12.5px; background:var(--paper-2); border:1px solid var(--line); border-radius:5px; padding:1px 6px; color:var(--ink); white-space:nowrap; }
+  code.inl { font-family:var(--mono); font-size:.86em; background:var(--paper-2); border:1px solid var(--line); padding:1px 5px; border-radius:4px; color:var(--ink); }
+
+  /* terminal block */
+  .term { background:var(--term-bg); border-radius:9px; margin:10px 0; overflow:hidden; border:1px solid rgba(255,255,255,.06); }
+  .term .bar { display:flex; align-items:center; gap:7px; padding:8px 12px; border-bottom:1px solid rgba(255,255,255,.07); }
+  .term .dot { width:9px; height:9px; border-radius:50%; background:#3f444b; }
+  .term .bar .cap { margin-left:8px; font-family:var(--mono); font-size:10.5px; letter-spacing:.08em; text-transform:uppercase; color:var(--term-dim); }
+  .term pre { margin:0; padding:13px 15px; overflow-x:auto; font-family:var(--mono); font-size:12.8px; line-height:1.65; color:var(--term-ink); }
+  .term .c { color:var(--term-green); } /* command */
+  .term .p2 { color:var(--term-amber); }  /* prompt/flag */
+  .term .cm { color:var(--term-dim); }   /* comment */
+
+  /* code block (source) */
+  .code { background:var(--paper-2); border:1px solid var(--line); border-radius:9px; margin:10px 0; overflow:hidden; }
+  .code .bar { padding:7px 13px; border-bottom:1px solid var(--line); font-family:var(--mono); font-size:10.5px; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); background:var(--card); }
+  .code pre { margin:0; padding:13px 15px; overflow-x:auto; font-family:var(--mono); font-size:12.6px; line-height:1.6; color:var(--ink); }
+
+  /* checkpoints */
+  .checks { margin:12px 0 2px; border:1px solid color-mix(in srgb,var(--good) 35%, var(--line)); background:var(--good-soft); border-radius:9px; padding:14px 16px; }
+  .checks .ttl { font-family:var(--mono); font-size:10.5px; letter-spacing:.14em; text-transform:uppercase; color:var(--good); font-weight:700; margin-bottom:8px; }
+  .checks ul { list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:7px; }
+  .checks li { display:grid; grid-template-columns:20px 1fr; gap:8px; align-items:start; font-size:13.5px; color:var(--ink-2); }
+  .checks .box { width:15px; height:15px; margin-top:2px; border:1.5px solid var(--good); border-radius:4px; }
+  .checks b { color:var(--ink); font-weight:600; }
+
+  .stretch { margin-top:14px; font-size:13.5px; color:var(--ink-2); border-left:3px solid var(--steel); padding:4px 0 4px 12px; }
+  .stretch .lbl { font-family:var(--mono); font-size:10px; letter-spacing:.12em; text-transform:uppercase; color:var(--steel); font-weight:700; display:block; margin-bottom:2px; }
+
+  .callout { margin:12px 0; border:1px solid var(--line); border-left:4px solid var(--amber); background:var(--amber-soft); border-radius:8px; padding:12px 16px; font-size:13.5px; color:var(--ink-2); }
+  .callout b { color:var(--ink); }
+
+  footer.foot { margin-top:36px; padding-top:18px; border-top:1px solid var(--line); display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap; font-family:var(--mono); font-size:11px; letter-spacing:.04em; color:var(--muted); }
+  a.top { color:var(--steel); text-decoration:none; }
+  @media (max-width:600px){ .ws-head{flex-direction:column;} .index a{grid-template-columns:44px 1fr;} .index .p{display:none;} }
+</style>
+
+<div class="page">
+  <div class="wrap">
+
+    <header class="hero">
+      <div class="hero-top">
+        <span class="eyebrow">Lab Workbook · Student Companion</span>
+        <h1>Fulfill WMS<br><span class="sub">Hands-on lab worksheets</span></h1>
+        <p class="lede">One worksheet per day. Each has the exact commands, real file paths from the repo,
+          numbered steps, and checkpoints to confirm you're on track before moving on. Pairs with the
+          10-day curriculum handout.</p>
+      </div>
+      <div class="howto">
+        <div class="item"><span class="k">▹</span><span>Commands assume you're at the <span class="path">wms/</span> repo root unless noted.</span></div>
+        <div class="item"><span class="k">✓</span><span>Don't advance past a day until every checkpoint passes.</span></div>
+        <div class="item"><span class="k">★</span><span>Days 05–06 are the crux; Days 07–08 build features not yet in the repo.</span></div>
+      </div>
+    </header>
+
+    <nav class="index" aria-label="Worksheet index">
+      <a href="#d1"><span class="n">01</span><span class="t">Environment &amp; first run</span><span class="p">Foundation</span></a>
+      <a href="#d2"><span class="n">02</span><span class="t">Prisma schema &amp; a migration</span><span class="p">Data</span></a>
+      <a href="#d3"><span class="n">03</span><span class="t">Build a NestJS module</span><span class="p">API</span></a>
+      <a href="#d4"><span class="n">04</span><span class="t">Topology + catalog, end to end</span><span class="p">Master data</span></a>
+      <a href="#d5"><span class="n">05</span><span class="t">The inventory kernel &amp; ledger</span><span class="p">Kernel ★</span></a>
+      <a href="#d6"><span class="n">06</span><span class="t">Concurrency &amp; idempotency</span><span class="p">Kernel ★</span></a>
+      <a href="#d7"><span class="n">07</span><span class="t">Build receiving → ledger</span><span class="p">Inbound</span></a>
+      <a href="#d8"><span class="n">08</span><span class="t">Build FIFO/FEFO allocation</span><span class="p">Outbound</span></a>
+      <a href="#d9"><span class="n">09</span><span class="t">Extend the scanner PWA</span><span class="p">Scanner</span></a>
+      <a href="#d10"><span class="n">10</span><span class="t">End-to-end capstone</span><span class="p">Ship</span></a>
+    </nav>
+
+    <!-- ============ DAY 1 ============ -->
+    <section class="ws" id="d1">
+      <div class="ws-head">
+        <div class="badge"><div class="lbl">Day</div><div class="num">01</div></div>
+        <div class="h">
+          <h2>Environment &amp; first run</h2>
+          <p class="goal"><b>Goal:</b> a clean checkout starts locally with one stack, and you can hit a seeded endpoint.</p>
+          <div class="chips"><span class="chip phase">Foundation</span><span class="chip time">~3–4 hrs</span></div>
+        </div>
+      </div>
+      <div class="ws-body">
+        <div class="step-label"><span class="tag">Setup</span><span class="rule"></span></div>
+        <div class="term"><div class="bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="cap">from wms/ root</span></div>
+<pre><span class="c">cp</span> .env.example .env
+<span class="c">pnpm</span> install
+<span class="c">docker</span> compose up <span class="p2">-d</span> postgres redis minio   <span class="cm"># Postgres 5432 · Redis 6379 · MinIO 9000/9001</span>
+<span class="c">pnpm</span> <span class="p2">--filter</span> @wms/database db:generate     <span class="cm"># prisma generate</span>
+<span class="c">pnpm</span> <span class="p2">--filter</span> @wms/database db:migrate      <span class="cm"># apply migrations</span>
+<span class="c">pnpm</span> <span class="p2">--filter</span> @wms/database db:seed         <span class="cm"># warehouse SEL-01 + demo data</span>
+<span class="c">pnpm</span> dev                                   <span class="cm"># runs api + web via turbo</span></pre></div>
+
+        <div class="step-label"><span class="tag">Steps</span><span class="rule"></span></div>
+        <ol class="steps">
+          <li>Open the <b>web console</b> at <code class="inl">http://localhost:3000</code> and the <b>API docs</b> (Swagger) at <code class="inl">http://localhost:4000/docs</code>.</li>
+          <li>Read what the seed created: warehouse <code class="inl">SEL-01</code>, zones <code class="inl">RCV</code> &amp; <code class="inl">A</code>, locations, SKU <code class="inl">DEMO-001</code> (barcode <code class="inl">880000000001</code>), and one balance of <b>420 on-hand / 62 reserved</b>.</li>
+          <li>Verify the API from the terminal (see below), then click through the console pages.</li>
+        </ol>
+        <div class="term"><div class="bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="cap">verify</span></div>
+<pre><span class="c">curl</span> -s localhost:4000/api/v1/health/ready
+<span class="cm"># → {"status":"ready","timestamp":"..."}</span>
+<span class="c">curl</span> -s localhost:4000/api/v1/warehouses | jq '.[0].code'
+<span class="cm"># → "SEL-01"</span></pre></div>
+
+        <div class="checks"><div class="ttl">Checkpoints</div><ul>
+          <li><span class="box"></span><span>Web console loads at <b>:3000</b>; Swagger loads at <b>:4000/docs</b>.</span></li>
+          <li><span class="box"></span><span><code class="inl">health/ready</code> returns <b>"ready"</b> (proves the DB connection works).</span></li>
+          <li><span class="box"></span><span>The warehouses endpoint returns <b>SEL-01</b> with its zones.</span></li>
+        </ul></div>
+        <div class="stretch"><span class="lbl">Stretch</span>Open the console from your phone on the same Wi-Fi at <span class="path">http://&lt;your-ip&gt;:3000</span> and confirm it loads.</div>
+      </div>
+    </section>
+
+    <!-- ============ DAY 2 ============ -->
+    <section class="ws" id="d2">
+      <div class="ws-head">
+        <div class="badge"><div class="lbl">Day</div><div class="num">02</div></div>
+        <div class="h">
+          <h2>Prisma schema &amp; your first migration</h2>
+          <p class="goal"><b>Goal:</b> author a migration and see the generated SQL land in Postgres.</p>
+          <div class="chips"><span class="chip phase">Data</span><span class="chip time">~4–5 hrs</span></div>
+        </div>
+      </div>
+      <div class="ws-body">
+        <div class="step-label"><span class="tag">Read first</span><span class="rule"></span></div>
+        <ol class="steps">
+          <li>Open <span class="path">packages/database/prisma/schema.prisma</span>. Find <code class="inl">InventoryBalance</code> and <code class="inl">InventoryTransaction</code> and note: <b>UUID ids</b>, a <b>version</b> field, <b>Decimal</b> quantities (not Float), and the unique constraint on <code class="inl">locationId + skuId + lotNumber + status</code>.</li>
+          <li>Open <span class="path">packages/database/prisma/seed.ts</span> and match each record to what you saw in the console yesterday.</li>
+        </ol>
+        <div class="step-label"><span class="tag">Do</span><span class="rule"></span></div>
+        <ol class="steps">
+          <li>Add an optional <code class="inl">note String?</code> field to the <b>Location</b> model in the schema.</li>
+          <li>Create the migration (Prisma prompts for and applies it):</li>
+        </ol>
+        <div class="term"><div class="bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="cap">migrate + inspect</span></div>
+<pre><span class="c">pnpm</span> <span class="p2">--filter</span> @wms/database db:migrate <span class="p2">--</span> <span class="p2">--name</span> add_location_note
+<span class="cm"># then read the generated SQL:</span>
+<span class="c">cat</span> packages/database/prisma/migrations/*add_location_note/migration.sql
+<span class="cm"># confirm the column exists in Postgres:</span>
+<span class="c">docker</span> compose exec postgres psql -U wms -d wms -c '\d "Location"'</pre></div>
+        <div class="checks"><div class="ttl">Checkpoints</div><ul>
+          <li><span class="box"></span><span>A new folder exists under <span class="path">prisma/migrations/</span> containing an <code class="inl">ALTER TABLE "Location" ADD COLUMN "note"</code>.</span></li>
+          <li><span class="box"></span><span><code class="inl">psql \d "Location"</code> lists the <b>note</b> column.</span></li>
+          <li><span class="box"></span><span>You can explain <b>why quantities are Decimal and ids are UUID</b> in one sentence each.</span></li>
+        </ul></div>
+        <div class="callout"><b>Rule to remember:</b> never hand-edit an applied migration. Change the schema and generate a new one.</div>
+      </div>
+    </section>
+
+    <!-- ============ DAY 3 ============ -->
+    <section class="ws" id="d3">
+      <div class="ws-head">
+        <div class="badge"><div class="lbl">Day</div><div class="num">03</div></div>
+        <div class="h">
+          <h2>Build a NestJS module from scratch</h2>
+          <p class="goal"><b>Goal:</b> a new <code class="inl">suppliers</code> endpoint you wrote, visible in Swagger.</p>
+          <div class="chips"><span class="chip phase">API</span><span class="chip build">Build</span><span class="chip time">~5–6 hrs</span></div>
+        </div>
+      </div>
+      <div class="ws-body">
+        <div class="step-label"><span class="tag">Read first</span><span class="rule"></span></div>
+        <p class="note">Study the warehouse module as your template — it shows controller + service + DTO + Prisma + audit/outbox in a transaction:</p>
+        <ol class="steps">
+          <li><span class="path">apps/api/src/warehouse/warehouse.controller.ts</span> — routing, <code class="inl">@Version("1")</code>, <code class="inl">ParseUUIDPipe</code>.</li>
+          <li><span class="path">apps/api/src/warehouse/warehouse.service.ts</span> — <code class="inl">prisma.$transaction</code>, <code class="inl">P2002</code> → <code class="inl">ConflictException</code>.</li>
+          <li><span class="path">apps/api/src/warehouse/dto/create-warehouse.dto.ts</span> — <code class="inl">class-validator</code> decorators.</li>
+        </ol>
+        <div class="step-label"><span class="tag">Do</span><span class="rule"></span></div>
+        <ol class="steps">
+          <li>Add a minimal <code class="inl">Supplier</code> model (id, name, code unique, active) to the schema and migrate (<code class="inl">--name add_supplier</code>).</li>
+          <li>Scaffold the module (or hand-write the four files mirroring warehouse):</li>
+        </ol>
+        <div class="term"><div class="bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="cap">scaffold + verify</span></div>
+<pre><span class="c">cd</span> apps/api
+<span class="c">pnpm</span> exec nest g module suppliers
+<span class="c">pnpm</span> exec nest g service suppliers <span class="p2">--no-spec</span>
+<span class="c">pnpm</span> exec nest g controller suppliers <span class="p2">--no-spec</span>
+<span class="cm"># wire SuppliersModule into apps/api/src/app.module.ts, then:</span>
+<span class="c">curl</span> -s -X POST localhost:4000/api/v1/suppliers \
+  -H 'content-type: application/json' \
+  -d '{"code":"ACME","name":"Acme Supply Co"}' | jq</pre></div>
+        <div class="checks"><div class="ttl">Checkpoints</div><ul>
+          <li><span class="box"></span><span><code class="inl">GET</code> and <code class="inl">POST /api/v1/suppliers</code> appear in <b>Swagger at /docs</b>.</span></li>
+          <li><span class="box"></span><span>Posting a duplicate <code class="inl">code</code> returns <b>409 Conflict</b>, not a 500.</span></li>
+          <li><span class="box"></span><span>An invalid body (missing <code class="inl">name</code>) returns <b>400</b> from the global ValidationPipe.</span></li>
+        </ul></div>
+        <div class="callout">The API runs with <code class="inl">whitelist + forbidNonWhitelisted</code>, so any field not in your DTO is <b>rejected</b>. Test that.</div>
+      </div>
+    </section>
+
+    <!-- ============ DAY 4 ============ -->
+    <section class="ws" id="d4">
+      <div class="ws-head">
+        <div class="badge"><div class="lbl">Day</div><div class="num">04</div></div>
+        <div class="h">
+          <h2>Topology + catalog, end to end</h2>
+          <p class="goal"><b>Goal:</b> build a warehouse, zones, locations and SKUs entirely through the UI, and extend one field top-to-bottom.</p>
+          <div class="chips"><span class="chip phase">Master data</span><span class="chip build">Build</span><span class="chip time">~5–6 hrs</span></div>
+        </div>
+      </div>
+      <div class="ws-body">
+        <div class="step-label"><span class="tag">Read first</span><span class="rule"></span></div>
+        <ol class="steps">
+          <li>API side: <span class="path">apps/api/src/catalog/catalog.service.ts</span> and <span class="path">.../dto/create-sku.dto.ts</span> (note barcode rules &amp; <code class="inl">TrackingPolicy</code>).</li>
+          <li>Web side: <span class="path">apps/web/src/app/catalog/product-catalog.tsx</span>, <span class="path">.../new/create-product-form.tsx</span>, and the importer at <span class="path">.../import/product-import.tsx</span>.</li>
+        </ol>
+        <div class="step-label"><span class="tag">Do</span><span class="rule"></span></div>
+        <ol class="steps">
+          <li>In the console, create a <b>zone</b> and a few <b>locations</b> under SEL-01, then a new <b>SKU</b> with a barcode. Confirm the barcode uniqueness rule by trying to reuse <code class="inl">880000000001</code>.</li>
+          <li><b>Extend one field end to end:</b> add <code class="inl">hazmat Boolean</code> to the <code class="inl">Sku</code> model → migrate → add it to <span class="path">create-sku.dto.ts</span> → surface it in the create form and the catalog list.</li>
+          <li>Run the <b>SKU CSV import</b> flow and watch valid vs rejected rows.</li>
+        </ol>
+        <div class="checks"><div class="ttl">Checkpoints</div><ul>
+          <li><span class="box"></span><span>New zone/locations/SKU created <b>through the UI</b> and visible after refresh.</span></li>
+          <li><span class="box"></span><span>Reusing an existing barcode is <b>rejected</b> with a clear message.</span></li>
+          <li><span class="box"></span><span>Your new <b>hazmat</b> field round-trips: set in the form → stored → shown in the list.</span></li>
+        </ul></div>
+        <div class="stretch"><span class="lbl">Stretch</span>Import a CSV where one row has a duplicate SKU code; confirm the good rows still import and the bad row is reported.</div>
+      </div>
+    </section>
+
+    <!-- ============ DAY 5 ============ -->
+    <section class="ws crux" id="d5">
+      <div class="ws-head">
+        <div class="badge"><div class="lbl">Day ★</div><div class="num">05</div></div>
+        <div class="h">
+          <h2>The inventory kernel &amp; the ledger</h2>
+          <p class="goal"><b>Goal:</b> understand the transactional adjustment, then write a <b>move</b> command that keeps the ledger consistent.</p>
+          <div class="chips"><span class="chip build">Crux · Build</span><span class="chip time">full day</span></div>
+        </div>
+      </div>
+      <div class="ws-body">
+        <div class="callout">This is the heart of the whole system. Read <span class="path">docs/adr/0002-inventory-invariants.md</span> before touching code.</div>
+        <div class="step-label"><span class="tag">Read first</span><span class="rule"></span></div>
+        <p class="note">Study <span class="path">apps/api/src/inventory/inventory.service.ts</span> → <code class="inl">createAdjustment</code>. It shows the <b>whole pattern</b> in one method:</p>
+        <div class="code"><div class="bar">inventory.service.ts · createAdjustment (the pattern)</div>
+<pre>await this.prisma.$transaction(async (tx) => {
+  // 1. optimistic lock: only update if version is unchanged
+  const updated = await tx.inventoryBalance.updateMany({
+    where: { id: current.id, version: current.version },
+    data: { onHandQty: resultingOnHand, version: { increment: 1 } },
+  });
+  if (updated.count !== 1) throw new ConflictException("Inventory changed…");
+
+  // 2. append an immutable ledger row IN THE SAME TRANSACTION
+  await tx.inventoryTransaction.create({ data: { type: "ADJUSTMENT", … } });
+
+  // 3. audit + 4. outbox event, also same transaction
+  await tx.auditLog.create({ … });
+  await tx.outboxEvent.create({ … });
+});</pre></div>
+        <div class="step-label"><span class="tag">Observe</span><span class="rule"></span></div>
+        <div class="term"><div class="bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="cap">run an adjustment, then read the ledger</span></div>
+<pre><span class="cm"># grab the seeded balance id:</span>
+<span class="c">BAL</span>=$(curl -s localhost:4000/api/v1/inventory-balances | jq -r '.[0].id')
+<span class="c">curl</span> -s -X POST localhost:4000/api/v1/inventory-adjustments \
+  -H 'content-type: application/json' \
+  -d "{\"balanceId\":\"$BAL\",\"direction\":\"INCREASE\",\"quantity\":10,
+       \"reason\":\"Cycle count\",\"notes\":\"\",\"idempotencyKey\":\"$(uuidgen)\"}" | jq
+<span class="cm"># the response includes the updated balance AND its recent transactions</span></pre></div>
+        <div class="step-label"><span class="tag">Build</span><span class="rule"></span></div>
+        <ol class="steps">
+          <li>Add a <code class="inl">POST /inventory-moves</code> endpoint + service method <code class="inl">createMove</code> that moves quantity from one location's balance to another.</li>
+          <li>In <b>one</b> <code class="inl">$transaction</code>: decrement the source balance (optimistic lock), upsert the destination balance, and write <b>one MOVE ledger row</b> with <code class="inl">fromLocationId</code> and <code class="inl">toLocationId</code>. Reject if the source lacks available stock.</li>
+        </ol>
+        <div class="checks"><div class="ttl">Checkpoints</div><ul>
+          <li><span class="box"></span><span>After an adjustment the balance <b>version increments by 1</b> and a matching ledger row exists.</span></li>
+          <li><span class="box"></span><span>Your <b>move</b> is atomic: total on-hand across both locations is unchanged, and one MOVE transaction records it.</span></li>
+          <li><span class="box"></span><span>A move larger than available stock is <b>rejected</b> — nothing is written.</span></li>
+        </ul></div>
+      </div>
+    </section>
+
+    <!-- ============ DAY 6 ============ -->
+    <section class="ws crux" id="d6">
+      <div class="ws-head">
+        <div class="badge"><div class="lbl">Day ★</div><div class="num">06</div></div>
+        <div class="h">
+          <h2>Concurrency &amp; idempotency</h2>
+          <p class="goal"><b>Goal:</b> prove with tests that inventory can't go negative under a race, and that scanner retries are safe.</p>
+          <div class="chips"><span class="chip build">Crux · Build</span><span class="chip time">full day</span></div>
+        </div>
+      </div>
+      <div class="ws-body">
+        <div class="step-label"><span class="tag">Concepts</span><span class="rule"></span></div>
+        <ol class="steps">
+          <li><b>Optimistic concurrency</b> — the <code class="inl">where: { version }</code> guard from Day 5. If <code class="inl">updated.count !== 1</code>, someone else won the race → conflict.</li>
+          <li><b>Idempotency</b> — every scanner mutation carries an <code class="inl">idempotencyKey</code>. A unique constraint on the ledger makes a replayed key fail with <code class="inl">P2002</code>, which the service maps to a safe conflict.</li>
+        </ol>
+        <div class="step-label"><span class="tag">Build the tests</span><span class="rule"></span></div>
+        <p class="note">Create <span class="path">apps/api/src/inventory/inventory.concurrency.spec.ts</span> against a real test database.</p>
+        <div class="code"><div class="bar">inventory.concurrency.spec.ts (skeleton)</div>
+<pre>it("cannot over-decrement under concurrency", async () => {
+  // seed a balance with onHand=10, reserved=0
+  const results = await Promise.allSettled([
+    service.createAdjustment({ balanceId, direction:"DECREASE", quantity:8, … }),
+    service.createAdjustment({ balanceId, direction:"DECREASE", quantity:8, … }),
+  ]);
+  const ok = results.filter(r => r.status === "fulfilled");
+  expect(ok).toHaveLength(1);          // exactly one wins
+  // on-hand never goes below reserved / below zero
+});
+
+it("replaying an idempotencyKey is rejected, not double-applied", async () => {
+  const key = randomUUID();
+  await service.createAdjustment({ …, idempotencyKey: key });
+  await expect(service.createAdjustment({ …, idempotencyKey: key }))
+    .rejects.toThrow(ConflictException);
+});</pre></div>
+        <div class="term"><div class="bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="cap">run</span></div>
+<pre><span class="c">pnpm</span> <span class="p2">--filter</span> @wms/api test</pre></div>
+        <div class="checks"><div class="ttl">Checkpoints</div><ul>
+          <li><span class="box"></span><span>The concurrency test shows <b>exactly one</b> of two racing decrements succeeds.</span></li>
+          <li><span class="box"></span><span>On-hand <b>never drops below reserved</b> in any run.</span></li>
+          <li><span class="box"></span><span>Replaying the same <code class="inl">idempotencyKey</code> is rejected and does <b>not</b> apply twice.</span></li>
+        </ul></div>
+        <div class="stretch"><span class="lbl">Stretch</span>Explain to a peer why Redis or a WebSocket event must <b>never</b> be the system of record for stock.</div>
+      </div>
+    </section>
+
+    <!-- ============ DAY 7 ============ -->
+    <section class="ws" id="d7">
+      <div class="ws-head">
+        <div class="badge"><div class="lbl">Day</div><div class="num">07</div></div>
+        <div class="h">
+          <h2>Build receiving → the ledger</h2>
+          <p class="goal"><b>Goal:</b> a PO can be received into a staging location, posting real stock and a ledger row.</p>
+          <div class="chips"><span class="chip phase">Inbound</span><span class="chip build">Build</span><span class="chip time">full day</span></div>
+        </div>
+      </div>
+      <div class="ws-body">
+        <div class="callout">The repo already creates purchase orders (<span class="path">apps/api/src/inbound/inbound.service.ts</span>) but <b>does not yet post receipts</b>. That's today's build — apply the Day-5 transaction pattern to inbound.</div>
+        <div class="step-label"><span class="tag">Read first</span><span class="rule"></span></div>
+        <ol class="steps">
+          <li>PO state machine: <code class="inl">DRAFT → OPEN → PARTIALLY_RECEIVED → RECEIVED → CLOSED</code>.</li>
+          <li>Re-read <code class="inl">createAdjustment</code> — your receipt-posting will use the same <code class="inl">$transaction</code> + ledger + upsert shape.</li>
+        </ol>
+        <div class="step-label"><span class="tag">Build</span><span class="rule"></span></div>
+        <ol class="steps">
+          <li>Create a PO through the console (or API) with one line for SKU <code class="inl">DEMO-001</code>.</li>
+          <li>Add <code class="inl">POST /purchase-orders/:id/receipts</code> with a service method <code class="inl">postReceipt</code>. For each received line, in one <code class="inl">$transaction</code>:
+            <b> upsert</b> an <code class="inl">InventoryBalance</code> at the <code class="inl">RECEIVING</code> location, <b>insert</b> an <code class="inl">InventoryTransaction</code> of type <code class="inl">RECEIPT</code>, and <b>advance</b> the PO status to <code class="inl">PARTIALLY_RECEIVED</code> or <code class="inl">RECEIVED</code> based on received vs expected.</li>
+          <li>Capture a discrepancy path: if received &lt; expected, keep the PO at <code class="inl">PARTIALLY_RECEIVED</code>.</li>
+        </ol>
+        <div class="checks"><div class="ttl">Checkpoints</div><ul>
+          <li><span class="box"></span><span>Receiving a full PO moves it to <b>RECEIVED</b> and creates stock at the receiving location.</span></li>
+          <li><span class="box"></span><span>Every received unit is explained by a <b>RECEIPT ledger row</b> — no stock appears without one.</span></li>
+          <li><span class="box"></span><span>A partial receipt leaves the PO at <b>PARTIALLY_RECEIVED</b>.</span></li>
+        </ul></div>
+        <div class="stretch"><span class="lbl">Stretch</span>Generate a simple putaway step: a second command that <b>moves</b> the received stock from <code class="inl">RCV-01</code> to a <code class="inl">STORAGE</code> location (reuse your Day-5 move).</div>
+      </div>
+    </section>
+
+    <!-- ============ DAY 8 ============ -->
+    <section class="ws" id="d8">
+      <div class="ws-head">
+        <div class="badge"><div class="lbl">Day</div><div class="num">08</div></div>
+        <div class="h">
+          <h2>Build FIFO/FEFO allocation</h2>
+          <p class="goal"><b>Goal:</b> allocating a sales order reserves real stock — and two orders can't over-reserve it.</p>
+          <div class="chips"><span class="chip phase">Outbound</span><span class="chip build">Build</span><span class="chip time">full day</span></div>
+        </div>
+      </div>
+      <div class="ws-body">
+        <div class="callout">The repo creates sales orders (<span class="path">apps/api/src/outbound/outbound.service.ts</span>) but <b>allocation isn't implemented</b>. Build it today.</div>
+        <div class="step-label"><span class="tag">Read first</span><span class="rule"></span></div>
+        <ol class="steps">
+          <li>Order flow: <code class="inl">DRAFT → READY_TO_ALLOCATE → ALLOCATED → PICKING → PICKED → PACKED → SHIPPED</code>.</li>
+          <li>Availability rule: <code class="inl">available = onHandQty − reservedQty</code>. Allocation increases <code class="inl">reservedQty</code>; it never touches on-hand.</li>
+        </ol>
+        <div class="step-label"><span class="tag">Build</span><span class="rule"></span></div>
+        <ol class="steps">
+          <li>Add <code class="inl">POST /sales-orders/:id/allocate</code> → <code class="inl">allocate(orderId)</code>.</li>
+          <li>For each order line, select candidate balances with <code class="inl">available &gt; 0</code>, ordered <b>FIFO</b> (oldest first) — or <b>FEFO</b> (earliest <code class="inl">expiresAt</code> first) when the SKU is <code class="inl">expiryTracked</code>. Iterate deterministically to reduce deadlocks.</li>
+          <li>Reserve against each balance with the <b>optimistic-lock</b> guard (<code class="inl">where: { version }</code>, increment <code class="inl">reservedQty</code> and <code class="inl">version</code>), write a <code class="inl">RESERVE</code> ledger row, and set the order to <code class="inl">ALLOCATED</code>. If demand can't be fully met, reject the whole allocation.</li>
+        </ol>
+        <div class="checks"><div class="ttl">Checkpoints</div><ul>
+          <li><span class="box"></span><span>Allocating raises <b>reservedQty</b> and drops <b>available</b> by the ordered amount.</span></li>
+          <li><span class="box"></span><span>An expiry-tracked SKU allocates the <b>earliest-expiring lot first</b> (FEFO).</span></li>
+          <li><span class="box"></span><span>Two orders competing for the last units → <b>only one</b> succeeds; the other is cleanly rejected.</span></li>
+        </ul></div>
+        <div class="stretch"><span class="lbl">Stretch</span>Add a <code class="inl">release</code> command that reverses a reservation (decrement reserved + RELEASE ledger row) for cancelled orders.</div>
+      </div>
+    </section>
+
+    <!-- ============ DAY 9 ============ -->
+    <section class="ws" id="d9">
+      <div class="ws-head">
+        <div class="badge"><div class="lbl">Day</div><div class="num">09</div></div>
+        <div class="h">
+          <h2>Extend the scanner PWA</h2>
+          <p class="goal"><b>Goal:</b> a scan-driven workflow with feedback and duplicate-scan handling, tested on a real device.</p>
+          <div class="chips"><span class="chip phase">Scanner</span><span class="chip build">Build</span><span class="chip time">~5–6 hrs</span></div>
+        </div>
+      </div>
+      <div class="ws-body">
+        <div class="step-label"><span class="tag">Read first</span><span class="rule"></span></div>
+        <ol class="steps">
+          <li><span class="path">apps/web/src/app/scan/scanner-workflow.tsx</span> — the scan step machine and keyboard-wedge input handling.</li>
+          <li><span class="path">apps/web/src/lib/barcode.ts</span> — parsing/normalizing scans; <span class="path">apps/web/src/app/manifest.ts</span> — the PWA manifest.</li>
+        </ol>
+        <div class="step-label"><span class="tag">Build</span><span class="rule"></span></div>
+        <ol class="steps">
+          <li>Extend a flow to the full <b>putaway sequence</b>: scan <code class="inl">source location → item → destination → quantity</code>, calling your Day-5 move endpoint to commit.</li>
+          <li>Add operator <b>feedback</b>: a success tone/vibration and a distinct error state; block a <b>duplicate scan</b> of the same step.</li>
+          <li>Keep it connectivity-required — show a clear offline indicator and prevent submit when offline (no queued stock mutations).</li>
+        </ol>
+        <div class="term"><div class="bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="cap">test on a phone (camera needs HTTPS)</span></div>
+<pre><span class="c">pnpm</span> <span class="p2">--filter</span> web dev:https
+<span class="cm"># open the printed https network URL on your phone, trust the dev cert</span></pre></div>
+        <div class="checks"><div class="ttl">Checkpoints</div><ul>
+          <li><span class="box"></span><span>The putaway flow runs end to end from <b>scans only</b> and commits a real move.</span></li>
+          <li><span class="box"></span><span>Success and error give <b>distinct feedback</b>; a repeated scan is caught.</span></li>
+          <li><span class="box"></span><span>Going offline <b>blocks submission</b> with a visible indicator.</span></li>
+        </ul></div>
+      </div>
+    </section>
+
+    <!-- ============ DAY 10 ============ -->
+    <section class="ws" id="d10">
+      <div class="ws-head">
+        <div class="badge"><div class="lbl">Day</div><div class="num">10</div></div>
+        <div class="h">
+          <h2>End-to-end capstone</h2>
+          <p class="goal"><b>Goal:</b> drive one unit of stock through the whole lifecycle and narrate the ledger at every step.</p>
+          <div class="chips"><span class="chip phase">Ship</span><span class="chip time">full day</span></div>
+        </div>
+      </div>
+      <div class="ws-body">
+        <div class="step-label"><span class="tag">The run</span><span class="rule"></span></div>
+        <ol class="steps">
+          <li><b>Receive</b> a PO into <code class="inl">RCV-01</code> (Day 7) → <b>put away</b> to a storage location (Day 5 move / Day 9 scan).</li>
+          <li>Create and <b>allocate</b> a sales order (Day 8) → confirm reservations rise.</li>
+          <li><b>Pick</b> the allocated stock, then <b>pack</b> and <b>confirm shipment</b> (walk the outbound console pages).</li>
+          <li>After each step, open <code class="inl">GET /api/v1/inventory-balances/:id</code> and the <b>audit log</b> and explain what changed.</li>
+        </ol>
+        <div class="term"><div class="bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="cap">observability</span></div>
+<pre><span class="c">curl</span> -s localhost:4000/api/v1/warehouses/audit-log | jq '.[0:5]'
+<span class="c">curl</span> -s localhost:4000/api/v1/health/ready</pre></div>
+        <div class="step-label"><span class="tag">Wrap-up discussion</span><span class="rule"></span></div>
+        <p class="note">What's intentionally <b>not built yet</b> and would come next: authentication + warehouse-scoped RBAC, BullMQ jobs, Socket.IO live updates, and reconciliation. Each student names the one they'd add first and why.</p>
+        <div class="checks"><div class="ttl">Capstone checkpoints</div><ul>
+          <li><span class="box"></span><span>A full <b>receive → putaway → allocate → pick → pack → ship</b> run with <b>no direct DB edits</b>.</span></li>
+          <li><span class="box"></span><span>Every quantity change is <b>explainable from the ledger</b>.</span></li>
+          <li><span class="box"></span><span>Each student demos their run and presents the one feature they extended.</span></li>
+        </ul></div>
+      </div>
+    </section>
+
+    <footer class="foot">
+      <span>FULFILL-WMS · LAB WORKBOOK v1</span>
+      <span><a class="top" href="#d1">↑ back to top</a></span>
+    </footer>
+
+  </div>
+</div>

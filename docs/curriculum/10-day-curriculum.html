@@ -1,0 +1,551 @@
+<title>Fulfill WMS — 10-Day Build Curriculum</title>
+
+<style>
+  :root {
+    --paper: #f7f5f1;
+    --paper-2: #efece5;
+    --card: #ffffff;
+    --ink: #1b1e22;
+    --ink-2: #3a3f45;
+    --muted: #6c655d;
+    --line: #e0dbd2;
+    --line-2: #d3ccc0;
+    --amber: #e8630a;
+    --amber-soft: #fbe9dc;
+    --steel: #2f6e8e;
+    --steel-soft: #e2edf2;
+    --good: #2f7d4f;
+    --crit: #b23a2e;
+    --shadow: 0 1px 2px rgba(27,30,34,.05), 0 8px 24px rgba(27,30,34,.06);
+    --mono: ui-monospace, "SF Mono", "SFMono-Regular", "Menlo", "Consolas", monospace;
+    --sans: system-ui, -apple-system, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #16181b;
+      --paper-2: #1b1e22;
+      --card: #21252a;
+      --ink: #f0ede7;
+      --ink-2: #c4c0b8;
+      --muted: #928b81;
+      --line: #2e333a;
+      --line-2: #3a4048;
+      --amber: #ff7d2e;
+      --amber-soft: #3a2513;
+      --steel: #6fb4d6;
+      --steel-soft: #16303c;
+      --good: #5fb380;
+      --crit: #e0796d;
+      --shadow: 0 1px 2px rgba(0,0,0,.3), 0 10px 30px rgba(0,0,0,.35);
+    }
+  }
+  :root[data-theme="light"] {
+    --paper: #f7f5f1; --paper-2: #efece5; --card: #ffffff; --ink: #1b1e22; --ink-2: #3a3f45;
+    --muted: #6c655d; --line: #e0dbd2; --line-2: #d3ccc0; --amber: #e8630a; --amber-soft: #fbe9dc;
+    --steel: #2f6e8e; --steel-soft: #e2edf2; --good: #2f7d4f; --crit: #b23a2e;
+    --shadow: 0 1px 2px rgba(27,30,34,.05), 0 8px 24px rgba(27,30,34,.06);
+  }
+  :root[data-theme="dark"] {
+    --paper: #16181b; --paper-2: #1b1e22; --card: #21252a; --ink: #f0ede7; --ink-2: #c4c0b8;
+    --muted: #928b81; --line: #2e333a; --line-2: #3a4048; --amber: #ff7d2e; --amber-soft: #3a2513;
+    --steel: #6fb4d6; --steel-soft: #16303c; --good: #5fb380; --crit: #e0796d;
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 10px 30px rgba(0,0,0,.35);
+  }
+
+  * { box-sizing: border-box; }
+  body { margin: 0; }
+  .page {
+    font-family: var(--sans);
+    background: var(--paper);
+    color: var(--ink);
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    padding: clamp(20px, 4vw, 56px) clamp(16px, 4vw, 40px) 72px;
+  }
+  .wrap { max-width: 940px; margin: 0 auto; }
+
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    color: var(--amber);
+    font-weight: 600;
+  }
+
+  /* ---------- Header ---------- */
+  header.hero {
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    background:
+      linear-gradient(180deg, var(--card), var(--card));
+    box-shadow: var(--shadow);
+    overflow: hidden;
+  }
+  .hero-top {
+    padding: clamp(24px, 4vw, 40px);
+    border-bottom: 1px solid var(--line);
+    position: relative;
+  }
+  .hero-top::before {
+    content: "";
+    position: absolute; inset: 0 auto 0 0; width: 6px;
+    background: repeating-linear-gradient(45deg, var(--amber) 0 10px, var(--ink) 10px 20px);
+    opacity: .9;
+  }
+  .hero-top { padding-left: clamp(32px, 5vw, 56px); }
+  h1 {
+    font-size: clamp(30px, 5.2vw, 52px);
+    line-height: 1.02;
+    letter-spacing: -.02em;
+    margin: 12px 0 10px;
+    text-wrap: balance;
+    font-weight: 800;
+  }
+  h1 .sub { color: var(--muted); font-weight: 500; }
+  .lede {
+    font-size: clamp(15px, 1.6vw, 17.5px);
+    color: var(--ink-2);
+    max-width: 60ch;
+    margin: 0;
+  }
+  .meta-strip {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: var(--line);
+  }
+  .meta {
+    background: var(--card);
+    padding: 16px clamp(16px, 3vw, 24px);
+  }
+  .meta .k {
+    font-family: var(--mono);
+    font-size: 10.5px; letter-spacing: .14em; text-transform: uppercase;
+    color: var(--muted); display: block; margin-bottom: 4px;
+  }
+  .meta .v { font-size: 14.5px; font-weight: 650; }
+  @media (max-width: 620px) {
+    .meta-strip { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  /* ---------- Through-line callout ---------- */
+  .throughline {
+    margin: 26px 0 8px;
+    border: 1px solid var(--line);
+    border-left: 4px solid var(--amber);
+    background: var(--amber-soft);
+    border-radius: 10px;
+    padding: 18px 22px;
+  }
+  .throughline p { margin: 6px 0 0; color: var(--ink-2); font-size: 15px; }
+  .throughline strong { color: var(--ink); }
+  .throughline .eyebrow { color: var(--amber); }
+
+  /* ---------- Section labels ---------- */
+  .section-head {
+    display: flex; align-items: baseline; justify-content: space-between;
+    gap: 16px; margin: 40px 0 16px; flex-wrap: wrap;
+  }
+  .section-head h2 {
+    font-size: 20px; margin: 0; letter-spacing: -.01em; font-weight: 750;
+  }
+  .section-head .hint { font-size: 13px; color: var(--muted); }
+
+  /* ---------- Day cards ---------- */
+  .days { display: flex; flex-direction: column; gap: 14px; }
+  .day {
+    display: grid;
+    grid-template-columns: 132px 1fr;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+    overflow: hidden;
+  }
+  .day.crux { border-color: var(--amber); }
+  .day.crux .rail { background: var(--amber-soft); }
+
+  .rail {
+    border-right: 1px solid var(--line);
+    padding: 18px 16px;
+    background: var(--paper-2);
+    display: flex; flex-direction: column; gap: 10px;
+  }
+  .daynum {
+    font-family: var(--mono);
+    font-size: 11px; letter-spacing: .12em; text-transform: uppercase;
+    color: var(--muted);
+  }
+  .daynum b { display: block; font-size: 34px; letter-spacing: -.02em; color: var(--ink); line-height: 1; margin-top: 3px; font-weight: 700; }
+  .phase {
+    font-family: var(--mono);
+    font-size: 10px; letter-spacing: .1em; text-transform: uppercase;
+    padding: 4px 7px; border-radius: 5px; align-self: flex-start;
+    background: var(--steel-soft); color: var(--steel); font-weight: 600;
+    border: 1px solid color-mix(in srgb, var(--steel) 25%, transparent);
+  }
+  .phase.kernel { background: var(--amber-soft); color: var(--amber);
+    border-color: color-mix(in srgb, var(--amber) 30%, transparent); }
+  .cruxtag {
+    font-family: var(--mono); font-size: 9.5px; letter-spacing: .1em;
+    text-transform: uppercase; color: var(--amber); font-weight: 700;
+    margin-top: auto;
+  }
+
+  .body { padding: 18px clamp(16px, 3vw, 24px); }
+  .day h3 { margin: 0 0 3px; font-size: 18px; letter-spacing: -.01em; font-weight: 700; }
+  .obj { margin: 0 0 12px; color: var(--muted); font-size: 13.5px; font-style: italic; }
+
+  .day ul { margin: 0 0 12px; padding-left: 18px; }
+  .day li { margin: 3px 0; font-size: 14px; color: var(--ink-2); }
+  .day li::marker { color: var(--line-2); }
+
+  code, .mono { font-family: var(--mono); font-size: .86em; }
+  .body code {
+    background: var(--paper-2); border: 1px solid var(--line);
+    padding: 1px 5px; border-radius: 4px; color: var(--ink);
+    white-space: nowrap;
+  }
+
+  .rowlabels { display: flex; flex-direction: column; gap: 8px; margin-top: 4px; }
+  .kv {
+    display: grid; grid-template-columns: 92px 1fr; gap: 10px; align-items: start;
+    font-size: 13.5px;
+  }
+  .kv .tag {
+    font-family: var(--mono); font-size: 10px; letter-spacing: .1em; text-transform: uppercase;
+    padding-top: 2px; font-weight: 600;
+  }
+  .kv.lab .tag { color: var(--steel); }
+  .kv.deliver .tag { color: var(--good); }
+  .kv .txt { color: var(--ink-2); }
+  .kv.deliver .txt { color: var(--ink); font-weight: 550; }
+
+  @media (max-width: 640px) {
+    .day { grid-template-columns: 1fr; }
+    .rail {
+      flex-direction: row; align-items: center; border-right: none;
+      border-bottom: 1px solid var(--line); gap: 14px; padding: 12px 16px;
+    }
+    .daynum b { display: inline; font-size: 22px; margin: 0 0 0 6px; }
+    .cruxtag { margin: 0 0 0 auto; }
+    .kv { grid-template-columns: 80px 1fr; }
+  }
+
+  /* ---------- Notes / grading ---------- */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  @media (max-width: 640px) { .grid-2 { grid-template-columns: 1fr; } }
+  .panel {
+    background: var(--card); border: 1px solid var(--line); border-radius: 12px;
+    padding: 20px 22px; box-shadow: var(--shadow);
+  }
+  .panel h3 { margin: 8px 0 12px; font-size: 16px; font-weight: 700; }
+  .panel ul { margin: 0; padding-left: 18px; }
+  .panel li { font-size: 14px; color: var(--ink-2); margin: 6px 0; }
+  .panel strong { color: var(--ink); }
+
+  .grade-row {
+    display: flex; align-items: center; gap: 12px; padding: 9px 0;
+    border-bottom: 1px dashed var(--line);
+  }
+  .grade-row:last-child { border-bottom: none; }
+  .pct {
+    font-family: var(--mono); font-weight: 700; font-size: 15px; color: var(--amber);
+    min-width: 46px; font-variant-numeric: tabular-nums;
+  }
+  .grade-row .d { font-size: 14px; color: var(--ink-2); }
+  .grade-row .d b { color: var(--ink); font-weight: 650; }
+
+  footer.foot {
+    margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--line);
+    display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap;
+    font-family: var(--mono); font-size: 11.5px; letter-spacing: .04em; color: var(--muted);
+  }
+  a { color: var(--steel); }
+</style>
+
+<div class="page">
+  <div class="wrap">
+
+    <header class="hero">
+      <div class="hero-top">
+        <span class="eyebrow">Instructor Handout · 10-Day Bootcamp</span>
+        <h1>Fulfill WMS<br><span class="sub">Build a warehouse system, end to end</span></h1>
+        <p class="lede">A ten-day, hands-on course that takes intermediate developers through the complete
+          inventory lifecycle — from an empty warehouse to a labeled, shipped order — building on a real
+          NestJS + Next.js + Prisma codebase.</p>
+      </div>
+      <div class="meta-strip">
+        <div class="meta"><span class="k">Duration</span><span class="v">10 full days</span></div>
+        <div class="meta"><span class="k">Audience</span><span class="v">Intermediate devs</span></div>
+        <div class="meta"><span class="k">Format</span><span class="v">40% teach · 60% lab</span></div>
+        <div class="meta"><span class="k">Stack</span><span class="v">NestJS · Next · Prisma</span></div>
+      </div>
+    </header>
+
+    <div class="throughline">
+      <span class="eyebrow">The through-line</span>
+      <p>The spine of the course is one idea the codebase is built on: <strong>inventory correctness through
+      an append-only ledger and database transactions.</strong> Every day builds toward it or around it.
+      Students progress: <strong>set up a warehouse → receive stock → put it away → hold correct inventory →
+      allocate &amp; pick orders → pack &amp; ship.</strong> Each day ends with a runnable vertical slice and a demo.</p>
+    </div>
+
+    <div class="section-head">
+      <h2>Prerequisites</h2>
+      <span class="hint">Send before Day 1</span>
+    </div>
+    <div class="panel">
+      <ul>
+        <li>Working knowledge of <strong>TypeScript</strong>, <strong>React basics</strong>, HTTP/REST, and a little SQL.</li>
+        <li>Installed: <strong>Node 24+</strong>, <strong>pnpm 11+</strong>, <strong>Docker Desktop</strong>, VS Code.</li>
+        <li>Clone the repo and run <code>docker compose up -d</code> once to pre-pull images before Day 1.</li>
+      </ul>
+    </div>
+
+    <div class="section-head">
+      <h2>The 10 days</h2>
+      <span class="hint">Each day: objective · topics · lab · deliverable</span>
+    </div>
+
+    <div class="days">
+
+      <!-- Day 1 -->
+      <article class="day">
+        <div class="rail">
+          <div class="daynum">Day<b>01</b></div>
+          <span class="phase">Foundation</span>
+        </div>
+        <div class="body">
+          <h3>Domain + Foundation</h3>
+          <p class="obj">Understand what a WMS does, and get the monorepo running locally.</p>
+          <ul>
+            <li>WMS domain tour: warehouse → zone → location/bin, SKU/barcode, the inbound→outbound lifecycle.</li>
+            <li>Monorepo architecture: pnpm workspaces + Turborepo; why a <strong>modular monolith</strong>, not microservices.</li>
+            <li>Repo layout tour: <code>apps/api</code>, <code>apps/web</code>, <code>packages/database</code>.</li>
+          </ul>
+          <div class="rowlabels">
+            <div class="kv lab"><span class="tag">Lab</span><span class="txt">Full local bringup: <code>docker compose up -d</code>, migrate, seed, <code>pnpm dev</code>. Open web (:3000), API (:4000), Swagger. Click through seeded warehouse <code>SEL-01</code>.</span></div>
+            <div class="kv deliver"><span class="tag">Deliver</span><span class="txt">A green local stack; everyone hits a seeded endpoint.</span></div>
+          </div>
+        </div>
+      </article>
+
+      <!-- Day 2 -->
+      <article class="day">
+        <div class="rail">
+          <div class="daynum">Day<b>02</b></div>
+          <span class="phase">Data</span>
+        </div>
+        <div class="body">
+          <h3>Data model with Prisma &amp; Postgres</h3>
+          <p class="obj">Read and extend the schema; understand why the model is shaped this way.</p>
+          <ul>
+            <li>Walk <code>schema.prisma</code>: topology, catalog, InventoryBalance, InventoryTransaction, orders, tasks.</li>
+            <li>Modeling rules: UUIDs, a <code>version</code> for optimistic concurrency, <strong>decimal quantities not floats</strong>, status transitions instead of destructive deletes.</li>
+            <li>Migrations vs seed; the migration workflow.</li>
+          </ul>
+          <div class="rowlabels">
+            <div class="kv lab"><span class="tag">Lab</span><span class="txt">Add a field to a model, generate a migration, re-seed, verify in Postgres, and read the SQL it produced.</span></div>
+            <div class="kv deliver"><span class="tag">Deliver</span><span class="txt">A student-authored migration applied cleanly.</span></div>
+          </div>
+        </div>
+      </article>
+
+      <!-- Day 3 -->
+      <article class="day">
+        <div class="rail">
+          <div class="daynum">Day<b>03</b></div>
+          <span class="phase">API</span>
+        </div>
+        <div class="body">
+          <h3>NestJS fundamentals</h3>
+          <p class="obj">Understand how one API module is wired — modules, services, controllers, DTOs.</p>
+          <ul>
+            <li>NestJS building blocks: modules, DI/providers, controllers, DTO validation, <code>PrismaService</code>.</li>
+            <li>OpenAPI / Swagger generation.</li>
+            <li>Guided read of the <code>warehouse</code> module — controller, service, DTOs.</li>
+          </ul>
+          <div class="rowlabels">
+            <div class="kv lab"><span class="tag">Lab</span><span class="txt">Build a new module from scratch (e.g. <code>suppliers</code>): model → migration → module/service/controller → DTO → visible in Swagger.</span></div>
+            <div class="kv deliver"><span class="tag">Deliver</span><span class="txt">A new working endpoint the student wrote themselves.</span></div>
+          </div>
+        </div>
+      </article>
+
+      <!-- Day 4 -->
+      <article class="day">
+        <div class="rail">
+          <div class="daynum">Day<b>04</b></div>
+          <span class="phase">Master data</span>
+        </div>
+        <div class="body">
+          <h3>Warehouse topology + Catalog</h3>
+          <p class="obj">Build the "setup" half of the app — API and UI together.</p>
+          <ul>
+            <li>Topology &amp; catalog rules: unique location barcode per warehouse, unique SKU code, globally unique barcode, tracking policies (lot/serial/expiry).</li>
+            <li>Next.js App Router + TanStack Query: how the console talks to the API.</li>
+          </ul>
+          <div class="rowlabels">
+            <div class="kv lab"><span class="tag">Lab</span><span class="txt">Extend catalog end to end (DTO → service → form → list), then wire the SKU CSV import path.</span></div>
+            <div class="kv deliver"><span class="tag">Deliver</span><span class="txt">Create a warehouse, zones, locations, and SKUs through the UI.</span></div>
+          </div>
+        </div>
+      </article>
+
+      <!-- Day 5 CRUX -->
+      <article class="day crux">
+        <div class="rail">
+          <div class="daynum">Day<b>05</b></div>
+          <span class="phase kernel">Kernel</span>
+          <span class="cruxtag">★ Crux day</span>
+        </div>
+        <div class="body">
+          <h3>The Inventory Kernel</h3>
+          <p class="obj">The most important day — understand and extend the transactional ledger.</p>
+          <ul>
+            <li>Read the inventory-invariants ADR. Core rules: <code>availableQty = onHand − reserved</code>; DB constraints forbid negative or over-reserved stock.</li>
+            <li><strong>Every balance change writes an InventoryTransaction row in the same DB transaction.</strong></li>
+            <li>Why Redis, queues, and sockets are never the system of record.</li>
+          </ul>
+          <div class="rowlabels">
+            <div class="kv lab"><span class="tag">Lab</span><span class="txt">Trace an adjustment UI → API → ledger. Write a service method doing a balance mutation inside a Prisma transaction that also inserts a ledger row.</span></div>
+            <div class="kv deliver"><span class="tag">Deliver</span><span class="txt">A student-written stock mutation that keeps the ledger consistent.</span></div>
+          </div>
+        </div>
+      </article>
+
+      <!-- Day 6 CRUX -->
+      <article class="day crux">
+        <div class="rail">
+          <div class="daynum">Day<b>06</b></div>
+          <span class="phase kernel">Kernel</span>
+          <span class="cruxtag">★ Crux day</span>
+        </div>
+        <div class="body">
+          <h3>Concurrency, idempotency &amp; correctness</h3>
+          <p class="obj">Make inventory bulletproof — the "senior engineer" day.</p>
+          <ul>
+            <li>Race conditions: two workers picking the same stock. Deterministic row locking, optimistic <code>version</code> conflicts.</li>
+            <li><strong>Idempotency keys</strong> for scanner retries; the <strong>outbox</strong> pattern for events/projections.</li>
+            <li>Standardized error codes: <code>INSUFFICIENT_STOCK</code>, <code>DUPLICATE_SCAN</code>, <code>INVALID_STATE_TRANSITION</code>.</li>
+          </ul>
+          <div class="rowlabels">
+            <div class="kv lab"><span class="tag">Lab</span><span class="txt">Write a test firing two concurrent allocations at one balance and prove it can't go negative. Add an idempotency check to a mutation endpoint.</span></div>
+            <div class="kv deliver"><span class="tag">Deliver</span><span class="txt">A passing concurrency / idempotency test.</span></div>
+          </div>
+        </div>
+      </article>
+
+      <!-- Day 7 -->
+      <article class="day">
+        <div class="rail">
+          <div class="daynum">Day<b>07</b></div>
+          <span class="phase">Inbound</span>
+        </div>
+        <div class="body">
+          <h3>Receiving &amp; putaway</h3>
+          <p class="obj">Build the first full workflow and state machine.</p>
+          <ul>
+            <li>PO state machine: <code>DRAFT → OPEN → PARTIALLY_RECEIVED → RECEIVED → CLOSED</code>.</li>
+            <li>Receiving with accepted / damaged / rejected quantities, discrepancies, then putaway tasks.</li>
+          </ul>
+          <div class="rowlabels">
+            <div class="kv lab"><span class="tag">Lab</span><span class="txt">Create a PO → receive into staging (ledger posts) → generate &amp; confirm a putaway that atomically moves stock to storage.</span></div>
+            <div class="kv deliver"><span class="tag">Deliver</span><span class="txt">A PO fully received and put away, provable from the ledger.</span></div>
+          </div>
+        </div>
+      </article>
+
+      <!-- Day 8 -->
+      <article class="day">
+        <div class="rail">
+          <div class="daynum">Day<b>08</b></div>
+          <span class="phase">Outbound</span>
+        </div>
+        <div class="body">
+          <h3>Orders, allocation &amp; picking</h3>
+          <p class="obj">The other half of the lifecycle.</p>
+          <ul>
+            <li>Order flow: <code>DRAFT → READY_TO_ALLOCATE → ALLOCATED → PICKING → PICKED → PACKED → SHIPPED</code>.</li>
+            <li>Allocation: <strong>FIFO</strong>, and <strong>FEFO</strong> for expiry-controlled SKUs; reservations consume available (not on-hand) stock; short-pick / damage exceptions.</li>
+          </ul>
+          <div class="rowlabels">
+            <div class="kv lab"><span class="tag">Lab</span><span class="txt">Create a sales order → allocate (watch reserved rise) → generate pick tasks → confirm picks → trigger a short-pick exception.</span></div>
+            <div class="kv deliver"><span class="tag">Deliver</span><span class="txt">An order taken from creation to PICKED without touching the DB directly.</span></div>
+          </div>
+        </div>
+      </article>
+
+      <!-- Day 9 -->
+      <article class="day">
+        <div class="rail">
+          <div class="daynum">Day<b>09</b></div>
+          <span class="phase">Scanner</span>
+        </div>
+        <div class="body">
+          <h3>The Scanner PWA</h3>
+          <p class="obj">Build the touch/scanner front end that ties the workflows together.</p>
+          <ul>
+            <li>PWA essentials: manifest, service worker, installability.</li>
+            <li><strong>Keyboard-wedge scanners first</strong>, camera scanning (ZXing) as fallback. Why stock-changing commands require connectivity — no offline mutations.</li>
+          </ul>
+          <div class="rowlabels">
+            <div class="kv lab"><span class="tag">Lab</span><span class="txt">Extend a scan flow (putaway: source → item → destination → qty) with feedback and duplicate-scan handling. Test from a phone on the LAN.</span></div>
+            <div class="kv deliver"><span class="tag">Deliver</span><span class="txt">A working scan-driven workflow demoed on a device.</span></div>
+          </div>
+        </div>
+      </article>
+
+      <!-- Day 10 -->
+      <article class="day">
+        <div class="rail">
+          <div class="daynum">Day<b>10</b></div>
+          <span class="phase">Ship</span>
+        </div>
+        <div class="body">
+          <h3>Pack, ship, deliveries + wrap</h3>
+          <p class="obj">Close the loop and ship a portfolio-ready demo.</p>
+          <ul>
+            <li>Packing verification, packages, shipment confirmation, final inventory transitions, deliveries.</li>
+            <li>Cross-cutting: RBAC / warehouse scoping, audit log, health/readiness, structured logging. Testing pyramid + deployment overview.</li>
+          </ul>
+          <div class="rowlabels">
+            <div class="kv lab"><span class="tag">Capstone</span><span class="txt">Full end-to-end run — <strong>receive → putaway → allocate → pick → pack → ship</strong> — narrating the ledger at each step. Each student presents one feature they extended.</span></div>
+            <div class="kv deliver"><span class="tag">Deliver</span><span class="txt">A live end-to-end demo + a short written architecture walkthrough.</span></div>
+          </div>
+        </div>
+      </article>
+
+    </div>
+
+    <div class="section-head">
+      <h2>Teaching notes &amp; assessment</h2>
+    </div>
+    <div class="grid-2">
+      <div class="panel">
+        <span class="eyebrow">Run the room</span>
+        <h3>Teaching notes</h3>
+        <ul>
+          <li><strong>Days 5–6 are the crux.</strong> If students master one thing, it's the transactional ledger + invariants. Pad these if the group struggles.</li>
+          <li><strong>Every day ships a vertical slice</strong> and ends with a demo — this keeps momentum visible and mirrors the repo's milestone philosophy.</li>
+          <li>Keep a shared "parking lot" for deep tangents so labs stay on schedule.</li>
+        </ul>
+      </div>
+      <div class="panel">
+        <span class="eyebrow">How to grade</span>
+        <h3>Suggested assessment</h3>
+        <div class="grade-row"><span class="pct">50%</span><span class="d"><b>Daily deliverables</b> — the runnable slice each day.</span></div>
+        <div class="grade-row"><span class="pct">30%</span><span class="d"><b>Day-10 capstone</b> — the end-to-end demo.</span></div>
+        <div class="grade-row"><span class="pct">20%</span><span class="d"><b>Individual extension</b> — a small feature carried across the week.</span></div>
+      </div>
+    </div>
+
+    <footer class="foot">
+      <span>FULFILL-WMS · CURRICULUM v1</span>
+      <span>NESTJS · NEXT.JS · PRISMA · POSTGRES</span>
+    </footer>
+
+  </div>
+</div>
