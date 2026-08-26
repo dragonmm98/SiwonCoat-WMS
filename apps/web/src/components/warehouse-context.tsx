@@ -13,6 +13,9 @@ export type Warehouse = {
   longitude: number | null;
   active: boolean;
   zones: { id: string; locations: { id: string }[] }[];
+  operationalSettings?: {
+    users?: { id: string; name: string; role: string; email: string; active: boolean }[];
+  };
 };
 
 type WarehouseContextValue = {
@@ -25,6 +28,18 @@ type WarehouseContextValue = {
 
 const STORAGE_KEY = "jably-selected-warehouse";
 const WarehouseContext = createContext<WarehouseContextValue | null>(null);
+
+const LOCAL_FALLBACK_WAREHOUSE: Warehouse = {
+  id: "siwoncoat-local",
+  code: "SEOUL-01",
+  name: "SIWONCOAT Warehouse",
+  timezone: "Asia/Seoul",
+  address: "Seoul, Republic of Korea",
+  latitude: null,
+  longitude: null,
+  active: true,
+  zones: [],
+};
 
 export function WarehouseProvider({ children }: { children: React.ReactNode }) {
   const [warehouses, setWarehouses] = useState<Warehouse[]>([]);
@@ -48,6 +63,13 @@ export function WarehouseProvider({ children }: { children: React.ReactNode }) {
         return next;
       });
       return body;
+    } catch {
+      // The visual demo can run independently when the optional WMS API is
+      // offline. Data-backed pages will reconnect on the next manual refresh.
+      const fallback = [LOCAL_FALLBACK_WAREHOUSE];
+      setWarehouses(fallback);
+      setSelectedWarehouse(LOCAL_FALLBACK_WAREHOUSE);
+      return fallback;
     } finally {
       setLoading(false);
     }

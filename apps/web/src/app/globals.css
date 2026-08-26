@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "./siwon-dashboard.css";
 
 :root {
   --ink: #18201d;
@@ -3920,3 +3921,74 @@ td strong {
     margin: 10mm auto;
   }
 }
+
+/* SIWONCOAT sidebar: keep the supplied artwork visible on one continuous,
+   transparent surface. These overrides intentionally follow the legacy WMS
+   rules above so no inherited green/blue blocks show through. */
+.siwon-sidebar .siwon-brand,
+.siwon-sidebar nav,
+.siwon-sidebar nav a,
+.siwon-sidebar nav a:hover,
+.siwon-sidebar nav a.active {
+  background: transparent;
+}
+
+.siwon-sidebar nav a.active {
+  box-shadow: none;
+}
+
+.siwon-sidebar {
+  background: #0b3547;
+}
+
+.siwon-sidebar .sidebar-warehouse-art {
+  display: none;
+}
+
+.siwon-sidebar nav a.active,
+.siwon-sidebar nav a.active:hover,
+.siwon-sidebar nav a:focus-visible {
+  background: transparent;
+  box-shadow: none;
+  outline-color: transparent;
+}
+
+.siwon-admin-card {
+  position: fixed !important;
+  left: 14px !important;
+  right: auto !important;
+  bottom: 58px !important;
+  z-index: 30;
+  width: 172px;
+  display: flex !important;
+  align-items: center;
+  gap: 10px;
+  min-height: 70px;
+  padding: 11px 10px;
+  border: 1px solid #4c7890;
+  border-radius: 12px;
+  background: linear-gradient(145deg, #164c64, #0b2c3c);
+  color: white;
+  box-shadow: 0 10px 24px #0017254d;
+}
+
+.siwon-admin-card > span {
+  width: 44px;
+  height: 44px;
+  flex: none;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: linear-gradient(145deg, #0c8bd4, #0866b4);
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.siwon-admin-card > div,
+.siwon-admin-card strong,
+.siwon-admin-card small { display: block; min-width: 0; }
+.siwon-admin-card > div { flex: 1; }
+.siwon-admin-card strong { overflow: hidden; font-size: 13px; line-height: 1.2; text-overflow: ellipsis; white-space: nowrap; }
+.siwon-admin-card small { margin-top: 4px; color: #a8c4d3; font-size: 10px; }
+.siwon-admin-card > b { color: #91b8cb; font-size: 20px; font-weight: 400; }
+.siwon-sidebar .sidebar-copyright { bottom: 14px; left: 22px; }

@@ -6,14 +6,14 @@ import "leaflet/dist/leaflet.css";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: { default: "Jably WMS", template: "%s · Jably WMS" },
+  title: { default: "SIWONCOAT WMS", template: "%s · SIWONCOAT WMS" },
   description:
     "Fast, accurate warehouse operations from receiving to shipment.",
   manifest: "/manifest.webmanifest",
 };
 
 export const viewport: Viewport = {
-  themeColor: "#172a24",
+  themeColor: "#062c4c",
   width: "device-width",
   initialScale: 1,
 };
