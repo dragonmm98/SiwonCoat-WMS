@@ -1,6 +1,7 @@
 import Link from "next/link";
+import type { ReactNode } from "react";
 
-type Metric = { label: string; value: string; detail: string };
+type Metric = { label: string; value: string; detail: string; icon?: ReactNode };
 type Row = {
   id: string;
   primary: string;
@@ -76,7 +77,9 @@ export function OperationsPage({
             <div
               className={`metric-icon ${["blue", "green", "amber", "violet"][index]}`}
               aria-hidden="true"
-            />
+            >
+              {metric.icon}
+            </div>
             <p>{metric.label}</p>
             <strong>{metric.value}</strong>
             <span>{metric.detail}</span>

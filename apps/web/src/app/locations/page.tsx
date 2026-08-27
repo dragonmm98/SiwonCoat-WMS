@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
-import { WarehouseSettings } from "../settings/warehouse-settings";
+import { LocationDashboard } from "./location-dashboard";
 
 export const metadata: Metadata = { title: "Locations" };
 
 export default function LocationsPage() {
-  return <WarehouseSettings />;
+  return <LocationDashboard />;
 }

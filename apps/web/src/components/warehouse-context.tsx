@@ -12,7 +12,20 @@ export type Warehouse = {
   latitude: number | null;
   longitude: number | null;
   active: boolean;
-  zones: { id: string; locations: { id: string }[] }[];
+  zones: {
+    id: string;
+    code?: string;
+    name?: string;
+    locations: {
+      id: string;
+      code?: string;
+      barcode?: string;
+      type?: string;
+      status?: string;
+      sequence?: number;
+      maxWeightKg?: string | null;
+    }[];
+  }[];
   operationalSettings?: {
     users?: { id: string; name: string; role: string; email: string; active: boolean }[];
   };

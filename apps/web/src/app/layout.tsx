@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { ServiceWorkerRegistration } from "@/components/service-worker-registration";
 import { WarehouseProvider } from "@/components/warehouse-context";
 import { WarehouseShell } from "@/components/warehouse-shell";
+import { LanguageProvider } from "@/components/language-context";
 import "leaflet/dist/leaflet.css";
 import "./globals.css";
 
@@ -25,7 +26,7 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <ServiceWorkerRegistration />
-        <WarehouseProvider><WarehouseShell>{children}</WarehouseShell></WarehouseProvider>
+        <LanguageProvider><WarehouseProvider><WarehouseShell>{children}</WarehouseShell></WarehouseProvider></LanguageProvider>
       </body>
     </html>
   );

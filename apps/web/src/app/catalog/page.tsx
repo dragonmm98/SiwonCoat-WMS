@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
-import { ProductCatalog } from "./product-catalog";
+import { ProductionDashboard } from "./production-dashboard";
 
-export const metadata: Metadata = { title: "Catalog" };
+export const metadata: Metadata = { title: "Production & Batches" };
 
 export default function CatalogPage() {
-  return <ProductCatalog />;
+  return <ProductionDashboard />;
 }

@@ -1,5 +1,6 @@
 "use client";
 
+import { useLanguage } from "@/components/language-context";
 import { useState } from "react";
 
 const products = [["SIWONCOAT Cool",682],["SIWONCOAT Surface",396],["Primer",108],["Seashell Filler",62]] as const;
@@ -12,7 +13,7 @@ const activity = [
 ] as const;
 
 export function WarehouseOverview() {
- const [language,setLanguage] = useState<"EN"|"KR">("EN");
+ const { language, setLanguage } = useLanguage();
  const [measure,setMeasure] = useState<"Units"|"Weight">("Units");
  return <div className="siwon-dashboard">
   <header className="siwon-topbar"><div className="siwon-heading"><h1>Warehouse Overview</h1><p>Real-time inventory and operations</p></div><label className="global-search"><span>⌕</span><input placeholder="Search SKU, batch or order" aria-label="Search SKU, batch or order" /></label><button className="icon-button notification" type="button" aria-label="Notifications">♧<i /></button><div className="language-toggle">{(["EN","KR"] as const).map(x=><button className={language===x?"active":""} onClick={()=>setLanguage(x)} key={x}>{x}</button>)}</div><div className="admin-chip"><b>WA</b><span>Warehouse Admin</span><i>⌄</i></div></header>

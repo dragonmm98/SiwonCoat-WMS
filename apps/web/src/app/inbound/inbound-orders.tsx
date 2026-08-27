@@ -96,6 +96,14 @@ export function InboundOrders() {
           label: "Expected units",
           value: loading ? "—" : number(totals.expected),
           detail: `${orders.length} purchase order${orders.length === 1 ? "" : "s"}`,
+          icon: (
+            <svg viewBox="0 0 24 24">
+              <path d="M3 7h11v10H3zM14 10h4l3 3v4h-7z" />
+              <circle cx="7" cy="18" r="2" />
+              <circle cx="18" cy="18" r="2" />
+              <path d="M7 4v6M4.5 7.5 7 10l2.5-2.5" />
+            </svg>
+          ),
         },
         {
           label: "Received units",
@@ -103,16 +111,34 @@ export function InboundOrders() {
           detail: totals.expected
             ? `${Math.round((totals.received / totals.expected) * 100)}% complete`
             : "No receipts yet",
+          icon: (
+            <svg viewBox="0 0 24 24">
+              <path d="M4 10h16v10H4zM8 4h8M12 4v11" />
+              <path d="m8.5 11.5 3.5 3.5 3.5-3.5" />
+            </svg>
+          ),
         },
         {
           label: "Open orders",
           value: loading ? "—" : number(totals.open),
           detail: `${number(totals.expected - totals.received)} units remaining`,
+          icon: (
+            <svg viewBox="0 0 24 24">
+              <rect x="5" y="4" width="14" height="17" rx="2" />
+              <path d="M9 4.5V3h6v1.5M8.5 10h7M8.5 14h5" />
+            </svg>
+          ),
         },
         {
           label: "Completed orders",
           value: loading ? "—" : number(totals.complete),
           detail: "Received or closed",
+          icon: (
+            <svg viewBox="0 0 24 24">
+              <circle cx="12" cy="12" r="9" />
+              <path d="m8 12 2.6 2.6L16.5 9" />
+            </svg>
+          ),
         },
       ]}
       rows={orders.map((order) => {
