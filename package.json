@@ -9,7 +9,8 @@
     "test": "turbo test",
     "typecheck": "turbo typecheck",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "postinstall": "pnpm --filter @wms/database build && pnpm --filter @wms/api build"
   },
   "devDependencies": {
     "prettier": "^3.6.2",

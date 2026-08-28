@@ -10,3 +10,5 @@ coverage/
 *.log
 .DS_Store
 packages/database/generated/
+.vercel
+.env*

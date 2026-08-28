@@ -1,0 +1,19 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": null,
+  "builds": [
+    {
+      "src": "apps/api/api/index.js",
+      "use": "@vercel/node",
+      "config": {
+        "includeFiles": ["packages/database/prisma/**"]
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "/apps/api/api/index.js"
+    }
+  ]
+}
